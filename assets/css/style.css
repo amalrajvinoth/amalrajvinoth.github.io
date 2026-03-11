@@ -758,6 +758,20 @@ button {
   opacity: 0.7;
 }
 
+[data-theme="dark"] .about-meta-label {
+  color: var(--accent);
+  opacity: 0.75;
+}
+
+[data-theme="dark"] .skill-category-title {
+  color: var(--accent);
+  opacity: 0.8;
+}
+
+[data-theme="dark"] .skill-category-title svg {
+  opacity: 1;
+}
+
 .skill-tag:hover {
   color: var(--accent);
   border-color: var(--accent-border);
