@@ -2,7 +2,7 @@ fileignoreconfig:
 - filename: assets/js/main.js
   checksum: c67bfc135ef6d732d69cc267e26e113015dc4a9bf891b79227bc153944965c85
 - filename: index.html
-  checksum: 27ad3caf60a47bd2c27146258d52f27d25763d1d1acd35ed1a5cb5420274dae3
+  checksum: 396ca6aa0ae2939dc9f4b5039b938ec04b7dd7591f7fd41e79cda3c3c9284d53
 - filename: assets/css/style.css
   checksum: e414e2cf25980ece01aa7cea139637120db3c716f7d7b8d37239c913540aa0c9
 version: "1.0"
