@@ -1,0 +1,31 @@
+### OS / Editor ###
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.idea/
+.vscode/
+
+### Node / Tooling ###
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-lock.yaml
+
+### Build Artifacts ###
+dist/
+*.log
+
+### Cursor / Claude ###
+.cursor/
+.claude/
+agent-transcripts/
+mcps/
+
+### Local / Secrets ###
+*.local.*
+*.local.json
+.env
+.env.*
+
