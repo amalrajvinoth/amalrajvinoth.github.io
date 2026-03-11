@@ -1,10 +1,41 @@
 /**
  * Amal James — Portfolio
- * Vanilla JS: nav, scroll animations, mobile menu, back-to-top
+ * Vanilla JS: theme toggle, nav, scroll animations, mobile menu, back-to-top
  */
 
 (function () {
   'use strict';
+
+  // ─── Theme toggle ────────────────────────────────────────────
+  const themeBtn = document.getElementById('theme-toggle');
+  const html     = document.documentElement;
+
+  function applyTheme(theme) {
+    html.dataset.theme = theme;
+    localStorage.setItem('theme', theme);
+    if (themeBtn) themeBtn.setAttribute('aria-label',
+      theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
+  }
+
+  // Ensure theme is set (inline script in <head> may have already done this)
+  if (!html.dataset.theme) {
+    const preferred = localStorage.getItem('theme') ||
+      (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    applyTheme(preferred);
+  }
+
+  if (themeBtn) {
+    themeBtn.addEventListener('click', () => {
+      applyTheme(html.dataset.theme === 'dark' ? 'light' : 'dark');
+    });
+  }
+
+  // Sync with system preference if no user override
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+    if (!localStorage.getItem('theme')) {
+      applyTheme(e.matches ? 'dark' : 'light');
+    }
+  });
 
   // ─── Elements ────────────────────────────────────────────────
   const nav        = document.getElementById('nav');
