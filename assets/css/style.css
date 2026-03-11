@@ -53,7 +53,7 @@
 
   --text-primary: #f1f5f9;
   --text-secondary: #8892a4;
-  --text-muted: #3e3e5a;
+  --text-muted: #64748b;
 
   --accent: #2dd4bf;
   --accent-hover: #5eead4;
@@ -758,7 +758,11 @@ button {
   opacity: 0.7;
 }
 
-[data-theme="dark"] .about-meta-label {
+[data-theme="dark"] .about-meta-label,
+[data-theme="dark"] .about-stat-label,
+[data-theme="dark"] .hero-stat-label,
+[data-theme="dark"] .contact-item-label,
+[data-theme="dark"] .exp-column-title {
   color: var(--accent);
   opacity: 0.75;
 }
