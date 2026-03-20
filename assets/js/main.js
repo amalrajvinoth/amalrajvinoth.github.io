@@ -11,22 +11,21 @@
   const html     = document.documentElement;
 
   function applyTheme(theme) {
-    html.dataset.theme = theme;
+    html.classList.toggle('dark', theme === 'dark');
     localStorage.setItem('theme', theme);
     if (themeBtn) themeBtn.setAttribute('aria-label',
       theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
   }
 
   // Ensure theme is set (inline script in <head> may have already done this)
-  if (!html.dataset.theme) {
-    const preferred = localStorage.getItem('theme') ||
-      (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  if (!html.classList.contains('dark') && !localStorage.getItem('theme')) {
+    const preferred = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
     applyTheme(preferred);
   }
 
   if (themeBtn) {
     themeBtn.addEventListener('click', () => {
-      applyTheme(html.dataset.theme === 'dark' ? 'light' : 'dark');
+      applyTheme(html.classList.contains('dark') ? 'light' : 'dark');
     });
   }
 
@@ -36,6 +35,12 @@
       applyTheme(e.matches ? 'dark' : 'light');
     }
   });
+
+  // Update theme toggle icon state on load
+  if (themeBtn) {
+    themeBtn.setAttribute('aria-label',
+      html.classList.contains('dark') ? 'Switch to light mode' : 'Switch to dark mode');
+  }
 
   // ─── Elements ────────────────────────────────────────────────
   const nav        = document.getElementById('nav');

@@ -5,4 +5,8 @@ fileignoreconfig:
   checksum: 396ca6aa0ae2939dc9f4b5039b938ec04b7dd7591f7fd41e79cda3c3c9284d53
 - filename: assets/css/style.css
   checksum: e414e2cf25980ece01aa7cea139637120db3c716f7d7b8d37239c913540aa0c9
+- filename: code.html
+  checksum: f410d713b12f4b53a125dd9eeff5a2bb88435e39a0a55fc870498225c690002d
+- filename: docs/superpowers/specs/2026-03-20-design-system-migration-design.md
+  checksum: c570dd0c24502538817b18625b72653fc0d5607e3a237941bdbd71fdbf78d5dc
 version: "1.0"
