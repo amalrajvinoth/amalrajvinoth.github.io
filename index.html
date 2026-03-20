@@ -15,713 +15,817 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Bebas+Neue&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="assets/css/style.css">
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            'primary':                  '#00685f',
+            'primary-container':        '#008378',
+            'primary-fixed':            '#89f5e7',
+            'on-primary':               '#ffffff',
+            'on-primary-fixed':         '#00201d',
+            'on-primary-fixed-variant': '#005049',
+            'surface':                  '#f8fafa',
+            'surface-container-low':    '#f2f4f4',
+            'surface-container':        '#eceeee',
+            'surface-container-high':   '#e6e8e8',
+            'surface-container-lowest': '#ffffff',
+            'on-surface':               '#191c1d',
+            'on-surface-variant':       '#3d4947',
+            'outline-variant':          '#bcc9c6',
+            'secondary':                '#5f5e5e',
+          },
+          fontFamily: {
+            'headline': ['Plus Jakarta Sans', 'sans-serif'],
+            'body':     ['Inter', 'sans-serif'],
+          },
+          borderRadius: {
+            'DEFAULT': '0.125rem',
+            'lg':      '0.25rem',
+            'xl':      '0.5rem',
+            '2xl':     '1rem',
+            'full':    '9999px',
+          },
+        },
+      },
+    }
+  </script>
 
   <!-- Prevent flash of wrong theme -->
   <script>
     try {
-      var t = localStorage.getItem('theme') ||
-        (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-      document.documentElement.dataset.theme = t;
+      if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
     } catch(e) {}
   </script>
+
+  <style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+
+    /* ── Background animation (code-stream) ── */
+    .page-bg {
+      position: fixed; inset: 0; z-index: -1; pointer-events: none;
+      background:
+        radial-gradient(circle at 0% 0%, rgba(13,148,136,0.10), transparent 60%),
+        radial-gradient(circle at 100% 100%, rgba(15,23,42,0.16), transparent 55%),
+        repeating-linear-gradient(
+          90deg,
+          rgba(15,23,42,0.35) 0px, rgba(15,23,42,0.35) 1px,
+          transparent 1px, transparent 3px
+        );
+      opacity: 0.55;
+      animation: code-stream 26s linear infinite;
+    }
+    .dark .page-bg {
+      opacity: 0.75;
+      background:
+        radial-gradient(circle at 0% 0%, rgba(45,212,191,0.2), transparent 60%),
+        radial-gradient(circle at 100% 100%, rgba(15,23,42,0.7), transparent 55%),
+        repeating-linear-gradient(
+          90deg,
+          rgba(15,23,42,0.75) 0px, rgba(15,23,42,0.75) 1px,
+          transparent 1px, transparent 3px
+        );
+    }
+    @keyframes code-stream {
+      0%   { background-position: 0 0, 0 0, 0 0; }
+      50%  { background-position: 0 -120px, 0 80px, -40px 0; }
+      100% { background-position: 0 -240px, 0 160px, -80px 0; }
+    }
+
+    /* ── Fade-in scroll animation ── */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(18px);
+      transition: opacity 0.4s ease, transform 0.4s ease;
+    }
+    .fade-in.visible { opacity: 1; transform: translateY(0); }
+    .fade-in-delay-1 { transition-delay: 0.08s; }
+    .fade-in-delay-2 { transition-delay: 0.16s; }
+    .fade-in-delay-3 { transition-delay: 0.24s; }
+
+    /* ── Mobile nav overlay ── */
+    .nav-mobile {
+      position: fixed; inset: 0; z-index: 40;
+      background: rgba(248,250,250,0.97);
+      transform: translateX(100%);
+      transition: transform 0.3s ease;
+    }
+    .dark .nav-mobile { background: rgba(15,23,23,0.97); }
+    .nav-mobile.open { transform: translateX(0); }
+
+    /* ── Nav scrolled shadow ── */
+    #nav.scrolled { box-shadow: 0 4px 24px rgba(0,0,0,0.06); }
+    .dark #nav.scrolled { box-shadow: 0 4px 24px rgba(0,0,0,0.4); }
+
+    /* ── Active nav link ── */
+    .nav-links a.active { color: #00685f; font-weight: 600; }
+    .dark .nav-links a.active { color: #6bd8cb; }
+
+    /* ── Hamburger button ── */
+    .nav-toggle { display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 5px; width: 36px; height: 36px; border-radius: 8px; border: none; background: transparent; cursor: pointer; padding: 6px; }
+    .nav-toggle span { display: block; width: 18px; height: 2px; background: #191c1d; border-radius: 2px; transition: transform 0.2s ease, opacity 0.2s ease; }
+    .dark .nav-toggle span { background: #e2e8f0; }
+    .nav-toggle.active span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .nav-toggle.active span:nth-child(2) { opacity: 0; }
+    .nav-toggle.active span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+    /* ── Back to top ── */
+    .back-to-top { opacity: 0; pointer-events: none; transition: opacity 0.2s ease; }
+    .back-to-top.visible { opacity: 1; pointer-events: auto; }
+
+    /* ── Hero scroll bounce ── */
+    @keyframes scroll-bounce {
+      0%, 100% { transform: translateY(0); }
+      50%       { transform: translateY(5px); }
+    }
+    .hero-scroll { animation: scroll-bounce 2s ease-in-out infinite; }
+
+    /* ── Availability pulse ── */
+    @keyframes pulse-dot {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(22,163,74,0.4); }
+      50%       { box-shadow: 0 0 0 5px rgba(22,163,74,0); }
+    }
+    .badge-dot { animation: pulse-dot 2.5s ease-in-out infinite; }
+
+    /* ── Timeline ── */
+    .timeline-line { position: absolute; left: 15px; top: 8px; bottom: 0; width: 2px; background: rgba(188,201,198,0.35); }
+    .dark .timeline-line { background: rgba(52,78,75,0.5); }
+  </style>
 </head>
-<body>
+<body class="bg-surface dark:bg-[#0f1717] font-body text-on-surface dark:text-slate-200 antialiased transition-colors duration-300">
 
 <div class="page-bg" aria-hidden="true"></div>
 
-<!-- ======= Navigation ======= -->
-<nav id="nav" role="navigation" aria-label="Main navigation">
-  <div class="nav-accent" aria-hidden="true"></div>
-  <div class="nav-inner">
-    <a href="#hero" class="nav-logo" aria-label="Go to top, Amal James">
-      <span class="nav-logo-bracket">&lt;</span>
-      <span class="nav-logo-name">
-        amal<span class="nav-logo-underscore">_</span>james
-      </span>
-      <span class="nav-logo-bracket">/&gt;</span>
+<!-- ======= Top Navigation ======= -->
+<header id="nav" class="fixed top-0 w-full z-50 bg-surface/70 dark:bg-[#0f1717]/80 backdrop-blur-xl border-b border-slate-200/10 dark:border-emerald-500/10 transition-shadow duration-300">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+    <a href="#hero" class="font-mono text-[15px] font-bold text-on-surface dark:text-emerald-50 hover:opacity-80 transition-opacity" aria-label="Go to top, Amal James">
+      <span class="text-primary dark:text-emerald-400">&lt;</span>amal_james<span class="text-primary dark:text-emerald-400">/&gt;</span>
     </a>
-    <div class="nav-links" role="menubar">
-      <a href="#about" role="menuitem">About</a>
-      <a href="#skills" role="menuitem">Skills</a>
-      <a href="#experience" role="menuitem">Experience</a>
-      <a href="#services" role="menuitem">Services</a>
-      <a href="#contact" role="menuitem">Contact</a>
-    </div>
-    <a href="#contact" class="nav-cta">Get in touch</a>
-    <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark mode">
-      <!-- Moon: visible in light mode -->
-      <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
-      <!-- Sun: visible in dark mode -->
-      <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
-    </button>
-    <button class="nav-toggle" aria-label="Toggle navigation menu" aria-expanded="false">
-      <span></span><span></span><span></span>
-    </button>
-  </div>
-</nav>
 
-<!-- Mobile nav -->
-<div class="nav-mobile" role="menu" aria-label="Mobile navigation">
-  <a href="#about" role="menuitem">About</a>
-  <a href="#skills" role="menuitem">Skills</a>
-  <a href="#experience" role="menuitem">Experience</a>
-  <a href="#services" role="menuitem">Services</a>
-  <a href="#contact" role="menuitem">Contact</a>
-  <a href="mailto:amalfreelancerjob@gmail.com" class="nav-mobile-cta" role="menuitem">Get in touch</a>
+    <nav class="nav-links hidden md:flex items-center gap-7" role="menubar">
+      <a href="#about"      class="text-sm text-on-surface-variant dark:text-slate-400 hover:text-primary dark:hover:text-emerald-400 font-medium transition-colors" role="menuitem">About</a>
+      <a href="#skills"     class="text-sm text-on-surface-variant dark:text-slate-400 hover:text-primary dark:hover:text-emerald-400 font-medium transition-colors" role="menuitem">Skills</a>
+      <a href="#experience" class="text-sm text-on-surface-variant dark:text-slate-400 hover:text-primary dark:hover:text-emerald-400 font-medium transition-colors" role="menuitem">Experience</a>
+      <a href="#services"   class="text-sm text-on-surface-variant dark:text-slate-400 hover:text-primary dark:hover:text-emerald-400 font-medium transition-colors" role="menuitem">Services</a>
+      <a href="#contact"    class="text-sm text-on-surface-variant dark:text-slate-400 hover:text-primary dark:hover:text-emerald-400 font-medium transition-colors" role="menuitem">Contact</a>
+    </nav>
+
+    <div class="flex items-center gap-2">
+      <button id="theme-toggle" class="w-9 h-9 flex items-center justify-center rounded-full text-primary dark:text-emerald-400 hover:bg-primary/10 dark:hover:bg-emerald-500/10 transition-colors" aria-label="Toggle dark mode">
+        <svg class="icon-moon w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+        <svg class="icon-sun w-5 h-5 hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+      </button>
+      <a href="#contact" class="hidden md:inline-flex items-center gap-2 px-4 py-2 bg-primary dark:bg-emerald-600 text-on-primary text-sm font-bold rounded-xl hover:opacity-90 active:scale-95 transition-all shadow-sm shadow-primary/20">Get in touch</a>
+      <button class="nav-toggle md:hidden" aria-label="Toggle navigation menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- ======= Mobile Nav Overlay ======= -->
+<div class="nav-mobile flex flex-col pt-20 pb-8 px-6" role="menu" aria-label="Mobile navigation">
+  <div class="flex flex-col gap-1 mt-4">
+    <a href="#about"      class="py-3 px-4 text-lg font-semibold text-on-surface dark:text-emerald-50 hover:bg-surface-container-low dark:hover:bg-emerald-900/20 rounded-2xl transition-colors" role="menuitem">About</a>
+    <a href="#skills"     class="py-3 px-4 text-lg font-semibold text-on-surface dark:text-emerald-50 hover:bg-surface-container-low dark:hover:bg-emerald-900/20 rounded-2xl transition-colors" role="menuitem">Skills</a>
+    <a href="#experience" class="py-3 px-4 text-lg font-semibold text-on-surface dark:text-emerald-50 hover:bg-surface-container-low dark:hover:bg-emerald-900/20 rounded-2xl transition-colors" role="menuitem">Experience</a>
+    <a href="#services"   class="py-3 px-4 text-lg font-semibold text-on-surface dark:text-emerald-50 hover:bg-surface-container-low dark:hover:bg-emerald-900/20 rounded-2xl transition-colors" role="menuitem">Services</a>
+    <a href="#contact"    class="py-3 px-4 text-lg font-semibold text-on-surface dark:text-emerald-50 hover:bg-surface-container-low dark:hover:bg-emerald-900/20 rounded-2xl transition-colors" role="menuitem">Contact</a>
+  </div>
+  <div class="mt-auto pt-8">
+    <a href="mailto:amalfreelancerjob@gmail.com" class="nav-mobile-cta flex items-center justify-center gap-2 px-6 py-4 bg-primary dark:bg-emerald-600 text-on-primary font-bold rounded-xl hover:opacity-90 transition-opacity" role="menuitem">Get in touch</a>
+  </div>
 </div>
 
+<main class="pt-16 pb-20 md:pb-0">
+
 <!-- ======= Hero ======= -->
-<section id="hero" aria-label="Introduction">
-  <div class="hero-bg" aria-hidden="true"></div>
-  <div class="container">
-    <div class="hero-inner">
+<section id="hero" class="bg-surface dark:bg-[#0f1717] py-20 md:py-28" aria-label="Introduction">
+  <div class="max-w-2xl mx-auto px-4 sm:px-6 text-center">
 
-      <div class="hero-badge" role="status">
-        <span class="hero-badge-dot" aria-hidden="true"></span>
-        Available for freelance
-      </div>
+    <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 dark:bg-emerald-500/10 text-primary dark:text-emerald-400 text-[10px] font-bold uppercase tracking-widest mb-6" role="status">
+      <span class="badge-dot w-2 h-2 rounded-full bg-green-500 dark:bg-green-400 flex-shrink-0"></span>
+      Available for freelance
+    </div>
 
-      <h1 class="hero-title">
-        <span class="hero-title-line">Amal&nbsp;</span>
-        <span class="hero-title-line hero-title-line-accent">James</span>
-      </h1>
+    <h1 class="font-headline tracking-tight leading-tight mb-4">
+      <span class="block text-5xl md:text-6xl font-extrabold text-on-surface dark:text-emerald-50">Amal&nbsp;</span>
+      <span class="text-5xl md:text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary-container dark:from-emerald-400 dark:to-teal-300">James</span>
+    </h1>
 
-      <p class="hero-role">
-        Senior Backend Engineer
-        <span class="hero-role-sep" aria-hidden="true"></span>
-        Berlin, Germany
-      </p>
+    <p class="text-on-surface-variant dark:text-slate-400 text-base font-medium mb-4">
+      Senior Backend Engineer
+      <span class="mx-2 text-outline-variant/60 dark:text-slate-600" aria-hidden="true">·</span>
+      Berlin, Germany
+    </p>
 
-      <p class="hero-desc">
+    <p class="text-on-surface-variant dark:text-slate-400 text-base leading-relaxed max-w-md mx-auto mb-8">
       I build secure, high-performance backend services · integrating monitoring pipelines
       and ensuring auditability across distributed systems.
       14+ years across Banking, FinTech, Telematics, Retail, Insurance, BPM, and Contact Center.
     </p>
 
-      <div class="hero-actions">
-        <a href="#contact" class="btn btn-primary">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-          Get in touch
-        </a>
-        <a href="#about" class="btn btn-secondary">Learn more</a>
-      </div>
-
-      <div class="hero-stats" aria-label="Key stats">
-        <div class="hero-stat">
-          <div class="hero-stat-value">14+</div>
-          <div class="hero-stat-label">Years experience</div>
-        </div>
-        <div class="hero-stat">
-          <div class="hero-stat-value">16+</div>
-          <div class="hero-stat-label">Microservices maintained</div>
-        </div>
-        <div class="hero-stat">
-          <div class="hero-stat-value">7</div>
-          <div class="hero-stat-label">Industries served</div>
-        </div>
-      </div>
-
-      <div class="hero-social" aria-label="Social links">
-        <a href="https://github.com/amalrajvinoth" aria-label="GitHub profile" target="_blank" rel="noopener noreferrer">
-          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0 1 12 6.844a9.59 9.59 0 0 1 2.504.337c1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.02 10.02 0 0 0 22 12.017C22 6.484 17.522 2 12 2z"/></svg>
-        </a>
-        <a href="https://linkedin.com/in/amalrajvinoth" aria-label="LinkedIn profile" target="_blank" rel="noopener noreferrer">
-          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
-        </a>
-        <a href="#contact" aria-label="Contact">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-        </a>
-      </div>
-
-      <a href="#about" class="hero-scroll" aria-label="Scroll to about section">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+    <div class="flex items-center justify-center gap-3 flex-wrap mb-12">
+      <a href="#contact" class="inline-flex items-center gap-2 px-6 py-3 bg-primary dark:bg-emerald-600 text-on-primary text-sm font-bold rounded-xl active:scale-95 transition-all shadow-lg shadow-primary/20 dark:shadow-emerald-900/40">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        Get in touch
       </a>
+      <a href="#about" class="inline-flex items-center px-6 py-3 bg-surface-container dark:bg-[#1a2525] text-on-surface dark:text-emerald-50 text-sm font-semibold rounded-xl hover:bg-surface-container-high dark:hover:bg-emerald-900/30 transition-colors">Learn more</a>
+    </div>
+
+    <div class="flex items-center justify-center gap-8 md:gap-12" aria-label="Key stats">
+      <div class="text-center">
+        <div class="text-3xl font-extrabold font-headline text-on-surface dark:text-emerald-50">14+</div>
+        <div class="text-xs text-on-surface-variant dark:text-slate-500 mt-1">Years experience</div>
+      </div>
+      <div class="w-px h-10 bg-outline-variant/40 dark:bg-slate-700"></div>
+      <div class="text-center">
+        <div class="text-3xl font-extrabold font-headline text-on-surface dark:text-emerald-50">16+</div>
+        <div class="text-xs text-on-surface-variant dark:text-slate-500 mt-1">Microservices maintained</div>
+      </div>
+      <div class="w-px h-10 bg-outline-variant/40 dark:bg-slate-700"></div>
+      <div class="text-center">
+        <div class="text-3xl font-extrabold font-headline text-on-surface dark:text-emerald-50">7</div>
+        <div class="text-xs text-on-surface-variant dark:text-slate-500 mt-1">Industries served</div>
+      </div>
+    </div>
+
+    <div class="flex items-center justify-center gap-4 mt-10" aria-label="Social links">
+      <a href="https://github.com/amalrajvinoth" class="w-9 h-9 flex items-center justify-center rounded-full text-on-surface-variant dark:text-slate-400 hover:text-primary dark:hover:text-emerald-400 hover:bg-surface-container-low dark:hover:bg-emerald-900/20 transition-colors" aria-label="GitHub profile" target="_blank" rel="noopener noreferrer">
+        <svg viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5" aria-hidden="true"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0 1 12 6.844a9.59 9.59 0 0 1 2.504.337c1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.02 10.02 0 0 0 22 12.017C22 6.484 17.522 2 12 2z"/></svg>
+      </a>
+      <a href="https://linkedin.com/in/amalrajvinoth" class="w-9 h-9 flex items-center justify-center rounded-full text-on-surface-variant dark:text-slate-400 hover:text-primary dark:hover:text-emerald-400 hover:bg-surface-container-low dark:hover:bg-emerald-900/20 transition-colors" aria-label="LinkedIn profile" target="_blank" rel="noopener noreferrer">
+        <svg viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+      </a>
+      <a href="#contact" class="w-9 h-9 flex items-center justify-center rounded-full text-on-surface-variant dark:text-slate-400 hover:text-primary dark:hover:text-emerald-400 hover:bg-surface-container-low dark:hover:bg-emerald-900/20 transition-colors" aria-label="Contact">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      </a>
+    </div>
+
+    <a href="#about" class="hero-scroll inline-flex items-center justify-center mt-10 text-on-surface-variant dark:text-slate-500 hover:text-primary dark:hover:text-emerald-400 transition-colors" aria-label="Scroll to about section">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+    </a>
+  </div>
+</section>
+
+<!-- ======= About ======= -->
+<section id="about" class="bg-surface dark:bg-[#0f1717] py-16 md:py-20" aria-labelledby="about-title">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6">
+    <div class="grid md:grid-cols-[240px_1fr] gap-12 items-start fade-in">
+
+      <div class="flex justify-center md:justify-start">
+        <div class="w-48 h-64 md:w-full md:h-80 rounded-2xl overflow-hidden bg-surface-container dark:bg-emerald-900/30 shadow-sm">
+          <img src="assets/img/profile-img.jpg" alt="Amal James · Senior Backend Engineer based in Berlin" class="w-full h-full object-cover" width="240" height="320" loading="lazy">
+        </div>
+      </div>
+
+      <div>
+        <span class="text-[11px] font-bold text-primary dark:text-emerald-400 uppercase tracking-widest mb-3 block">About Me</span>
+        <h2 class="font-headline text-3xl md:text-4xl font-extrabold tracking-tight text-on-surface dark:text-emerald-50 mb-6" id="about-title">Engineer. Architect.<br>Problem solver.</h2>
+
+        <div class="space-y-4 text-on-surface-variant dark:text-slate-400 text-[15px] leading-relaxed mb-8">
+          <p>14+ years building secure, high-performance backend services · integrating monitoring and reporting pipelines, and ensuring auditability and traceability across distributed systems. Domains spanned: Banking, FinTech, Telematics, Retail, Insurance, BPM, and Contact Center.</p>
+          <p>I work extensively with <strong class="text-on-surface dark:text-emerald-100 font-semibold">modern Java and Spring-based architectures</strong> in cloud-native environments, emphasising reliability, data integrity, and regulatory alignment. My default is to own the full picture · from architecture to delivery.</p>
+          <p>Currently leading backend development for a fintech payments platform in Berlin, maintaining 16+ microservices. Open for freelance and consulting engagements on a selective basis.</p>
+        </div>
+
+        <div class="flex gap-8 mb-8" aria-label="Career highlights">
+          <div>
+            <div class="text-2xl font-extrabold font-headline text-on-surface dark:text-emerald-50">14+</div>
+            <div class="text-xs text-on-surface-variant dark:text-slate-500 mt-0.5">Years in software</div>
+          </div>
+          <div>
+            <div class="text-2xl font-extrabold font-headline text-on-surface dark:text-emerald-50">MCA</div>
+            <div class="text-xs text-on-surface-variant dark:text-slate-500 mt-0.5">Postgraduate degree</div>
+          </div>
+          <div>
+            <div class="text-2xl font-extrabold font-headline text-on-surface dark:text-emerald-50">7</div>
+            <div class="text-xs text-on-surface-variant dark:text-slate-500 mt-0.5">Industries</div>
+          </div>
+        </div>
+
+        <div class="grid sm:grid-cols-2 gap-3" aria-label="Personal details">
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 flex items-center justify-center rounded-xl bg-primary/10 dark:bg-emerald-500/10 text-primary dark:text-emerald-400 flex-shrink-0">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+            </div>
+            <div>
+              <div class="text-[10px] font-semibold text-on-surface-variant dark:text-slate-500 uppercase tracking-wider">Location</div>
+              <div class="text-sm font-semibold text-on-surface dark:text-emerald-50">Berlin, Germany</div>
+            </div>
+          </div>
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 flex items-center justify-center rounded-xl bg-primary/10 dark:bg-emerald-500/10 text-primary dark:text-emerald-400 flex-shrink-0">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452z"/></svg>
+            </div>
+            <div>
+              <div class="text-[10px] font-semibold text-on-surface-variant dark:text-slate-500 uppercase tracking-wider">Connect</div>
+              <div class="text-sm font-semibold text-on-surface dark:text-emerald-50">LinkedIn · GitHub</div>
+            </div>
+          </div>
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 flex items-center justify-center rounded-xl bg-primary/10 dark:bg-emerald-500/10 text-primary dark:text-emerald-400 flex-shrink-0">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+            </div>
+            <div>
+              <div class="text-[10px] font-semibold text-on-surface-variant dark:text-slate-500 uppercase tracking-wider">Education</div>
+              <div class="text-sm font-semibold text-on-surface dark:text-emerald-50">MCA · Computer Science</div>
+            </div>
+          </div>
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 flex items-center justify-center rounded-xl bg-primary/10 dark:bg-emerald-500/10 text-primary dark:text-emerald-400 flex-shrink-0">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+            </div>
+            <div>
+              <div class="text-[10px] font-semibold text-on-surface-variant dark:text-slate-500 uppercase tracking-wider">Freelance</div>
+              <div class="text-sm font-bold text-green-600 dark:text-green-400">Available</div>
+            </div>
+          </div>
+        </div>
+      </div>
 
     </div>
   </div>
 </section>
 
-<main id="main">
+<!-- ======= Skills ======= -->
+<section id="skills" class="bg-surface-container-low dark:bg-[#141d1d] py-16 md:py-20" aria-labelledby="skills-title">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6">
+    <header class="mb-10 fade-in">
+      <span class="text-[11px] font-bold text-primary dark:text-emerald-400 uppercase tracking-widest mb-3 block">Technical Skills</span>
+      <h2 class="font-headline text-3xl font-extrabold tracking-tight text-on-surface dark:text-emerald-50 mb-2" id="skills-title">Technology stack</h2>
+      <p class="text-on-surface-variant dark:text-slate-400 text-sm">Hands-on expertise across the full backend stack · from distributed systems to observability and cloud infrastructure.</p>
+      <div class="w-10 h-0.5 bg-primary dark:bg-emerald-500 rounded-full mt-4"></div>
+    </header>
 
-  <!-- ======= About ======= -->
-  <section id="about" class="section" aria-labelledby="about-title">
-    <div class="container">
-      <div class="about-grid fade-in">
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
 
-        <div class="about-image-wrap">
-          <img
-            src="assets/img/profile-img.jpg"
-            alt="Amal James · Senior Full-Stack Engineer based in Berlin"
-            width="240"
-            height="320"
-            loading="lazy"
-          >
+      <div class="p-5 bg-surface-container-lowest dark:bg-[#1a2525] rounded-2xl shadow-sm dark:shadow-emerald-900/10 fade-in fade-in-delay-1">
+        <div class="flex items-center gap-2.5 mb-4 text-primary dark:text-emerald-400">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="2" width="20" height="8" rx="2"/><rect x="2" y="14" width="20" height="8" rx="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg>
+          <h3 class="font-headline font-bold text-sm text-on-surface dark:text-emerald-50">Backend</h3>
         </div>
-
-        <div class="about-content">
-          <span class="section-eyebrow">About Me</span>
-          <h2 class="section-title" id="about-title">Engineer. Architect.<br>Problem solver.</h2>
-
-          <p>
-            14+ years building secure, high-performance backend services · integrating monitoring
-            and reporting pipelines, and ensuring auditability and traceability across distributed
-            systems. Domains spanned: Banking, FinTech, Telematics, Retail, Insurance, BPM, and Contact Center.
-          </p>
-          <p>
-            I work extensively with <strong>modern Java and Spring-based architectures</strong> in cloud-native
-            environments, emphasising reliability, data integrity, and regulatory alignment. My default is to
-            own the full picture · from architecture to delivery.
-          </p>
-          <p>
-            Currently leading backend development for a fintech payments platform in Berlin,
-            maintaining 16+ microservices. Open for freelance and consulting engagements on a selective basis.
-          </p>
-
-          <div class="about-stats" aria-label="Career highlights">
-            <div class="about-stat">
-              <div class="about-stat-value">14+</div>
-              <div class="about-stat-label">Years in software</div>
-            </div>
-            <div class="about-stat">
-              <div class="about-stat-value">MCA</div>
-              <div class="about-stat-label">Postgraduate degree</div>
-            </div>
-            <div class="about-stat">
-              <div class="about-stat-value">7</div>
-              <div class="about-stat-label">Industries</div>
-            </div>
-          </div>
-
-          <div class="about-meta" aria-label="Personal details">
-            <div class="about-meta-item">
-              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
-              <div>
-                <span class="about-meta-label">Location</span>
-                <strong>Berlin, Germany</strong>
-              </div>
-            </div>
-            <div class="about-meta-item">
-              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452z"/></svg>
-              <div>
-                <span class="about-meta-label">Connect</span>
-                <strong>LinkedIn · GitHub</strong>
-              </div>
-            </div>
-            <div class="about-meta-item">
-              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
-              <div>
-                <span class="about-meta-label">Education</span>
-                <strong>MCA · Computer Science</strong>
-              </div>
-            </div>
-            <div class="about-meta-item">
-              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-              <div>
-                <span class="about-meta-label">Freelance</span>
-                <strong class="status-available">Available</strong>
-              </div>
-            </div>
-          </div>
+        <div class="flex flex-wrap gap-2">
+          <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-surface-container-high dark:bg-emerald-900/20 rounded-full text-xs font-semibold text-on-surface dark:text-emerald-100 hover:bg-primary-fixed hover:text-on-primary-fixed dark:hover:bg-emerald-500 dark:hover:text-white transition-colors duration-200 cursor-default"><img src="https://cdn.simpleicons.org/openjdk/0d9488" width="12" height="12" alt="" loading="lazy" aria-hidden="true">Java</span>
+          <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-surface-container-high dark:bg-emerald-900/20 rounded-full text-xs font-semibold text-on-surface dark:text-emerald-100 hover:bg-primary-fixed hover:text-on-primary-fixed dark:hover:bg-emerald-500 dark:hover:text-white transition-colors duration-200 cursor-default"><img src="https://cdn.simpleicons.org/springboot/0d9488" width="12" height="12" alt="" loading="lazy" aria-hidden="true">Spring Boot</span>
+          <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-surface-container-high dark:bg-emerald-900/20 rounded-full text-xs font-semibold text-on-surface dark:text-emerald-100 hover:bg-primary-fixed hover:text-on-primary-fixed dark:hover:bg-emerald-500 dark:hover:text-white transition-colors duration-200 cursor-default"><img src="https://cdn.simpleicons.org/nodedotjs/0d9488" width="12" height="12" alt="" loading="lazy" aria-hidden="true">Node.js</span>
+          <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-surface-container-high dark:bg-emerald-900/20 rounded-full text-xs font-semibold text-on-surface dark:text-emerald-100 hover:bg-primary-fixed hover:text-on-primary-fixed dark:hover:bg-emerald-500 dark:hover:text-white transition-colors duration-200 cursor-default"><img src="https://cdn.simpleicons.org/go/0d9488" width="12" height="12" alt="" loading="lazy" aria-hidden="true">Golang</span>
+          <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-surface-container-high dark:bg-emerald-900/20 rounded-full text-xs font-semibold text-on-surface dark:text-emerald-100 hover:bg-primary-fixed hover:text-on-primary-fixed dark:hover:bg-emerald-500 dark:hover:text-white transition-colors duration-200 cursor-default">REST APIs</span>
+          <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-surface-container-high dark:bg-emerald-900/20 rounded-full text-xs font-semibold text-on-surface dark:text-emerald-100 hover:bg-primary-fixed hover:text-on-primary-fixed dark:hover:bg-emerald-500 dark:hover:text-white transition-colors duration-200 cursor-default">Microservices</span>
+          <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-surface-container-high dark:bg-emerald-900/20 rounded-full text-xs font-semibold text-on-surface dark:text-emerald-100 hover:bg-primary-fixed hover:text-on-primary-fixed dark:hover:bg-emerald-500 dark:hover:text-white transition-colors duration-200 cursor-default"><img src="https://cdn.simpleicons.org/apachekafka/0d9488" width="12" height="12" alt="" loading="lazy" aria-hidden="true">Kafka</span>
+          <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-surface-container-high dark:bg-emerald-900/20 rounded-full text-xs font-semibold text-on-surface dark:text-emerald-100 hover:bg-primary-fixed hover:text-on-primary-fixed dark:hover:bg-emerald-500 dark:hover:text-white transition-colors duration-200 cursor-default"><img src="https://cdn.simpleicons.org/rabbitmq/0d9488" width="12" height="12" alt="" loading="lazy" aria-hidden="true">RabbitMQ</span>
+          <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-surface-container-high dark:bg-emerald-900/20 rounded-full text-xs font-semibold text-on-surface dark:text-emerald-100 hover:bg-primary-fixed hover:text-on-primary-fixed dark:hover:bg-emerald-500 dark:hover:text-white transition-colors duration-200 cursor-default"><img src="https://cdn.simpleicons.org/camunda/0d9488" width="12" height="12" alt="" loading="lazy" aria-hidden="true">Camunda</span>
+          <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-surface-container-high dark:bg-emerald-900/20 rounded-full text-xs font-semibold text-on-surface dark:text-emerald-100 hover:bg-primary-fixed hover:text-on-primary-fixed dark:hover:bg-emerald-500 dark:hover:text-white transition-colors duration-200 cursor-default">Hibernate</span>
         </div>
-
       </div>
-    </div>
-  </section>
 
-  <!-- ======= Skills ======= -->
-  <section id="skills" class="section section-alt" aria-labelledby="skills-title">
-    <div class="container">
-      <header class="section-header fade-in">
-        <span class="section-eyebrow">Technical Skills</span>
-        <h2 class="section-title" id="skills-title">Technology stack</h2>
-        <p class="section-desc">
-          Hands-on expertise across the full backend stack · from distributed systems to observability and cloud infrastructure.
+      <div class="p-5 bg-surface-container-lowest dark:bg-[#1a2525] rounded-2xl shadow-sm dark:shadow-emerald-900/10 fade-in fade-in-delay-2">
+        <div class="flex items-center gap-2.5 mb-4 text-primary dark:text-emerald-400">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          <h3 class="font-headline font-bold text-sm text-on-surface dark:text-emerald-50">Frontend</h3>
+        </div>
+        <div class="flex flex-wrap gap-2">
+          <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-surface-container-high dark:bg-emerald-900/20 rounded-full text-xs font-semibold text-on-surface dark:text-emerald-100 hover:bg-primary-fixed hover:text-on-primary-fixed dark:hover:bg-emerald-500 dark:hover:text-white transition-colors duration-200 cursor-default"><img src="https://cdn.simpleicons.org/typescript/0d9488" width="12" height="12" alt="" loading="lazy" aria-hidden="true">TypeScript</span>
+          <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-surface-container-high dark:bg-emerald-900/20 rounded-full text-xs font-semibold text-on-surface dark:text-emerald-100 hover:bg-primary-fixed hover:text-on-primary-fixed dark:hover:bg-emerald-500 dark:hover:text-white transition-colors duration-200 cursor-default"><img src="https://cdn.simpleicons.org/javascript/0d9488" width="12" height="12" alt="" loading="lazy" aria-hidden="true">JavaScript</span>
+          <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-surface-container-high dark:bg-emerald-900/20 rounded-full text-xs font-semibold text-on-surface dark:text-emerald-100 hover:bg-primary-fixed hover:text-on-primary-fixed dark:hover:bg-emerald-500 dark:hover:text-white transition-colors duration-200 cursor-default"><img src="https://cdn.simpleicons.org/react/0d9488" width="12" height="12" alt="" loading="lazy" aria-hidden="true">React</span>
+          <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-surface-container-high dark:bg-emerald-900/20 rounded-full text-xs font-semibold text-on-surface dark:text-emerald-100 hover:bg-primary-fixed hover:text-on-primary-fixed dark:hover:bg-emerald-500 dark:hover:text-white transition-colors duration-200 cursor-default"><img src="https://cdn.simpleicons.org/html5/0d9488" width="12" height="12" alt="" loading="lazy" aria-hidden="true">HTML5</span>
+          <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-surface-container-high dark:bg-emerald-900/20 rounded-full text-xs font-semibold text-on-surface dark:text-emerald-100 hover:bg-primary-fixed hover:text-on-primary-fixed dark:hover:bg-emerald-500 dark:hover:text-white transition-colors duration-200 cursor-default"><img src="https://cdn.simpleicons.org/css/0d9488" width="12" height="12" alt="" loading="lazy" aria-hidden="true">CSS3</span>
+        </div>
+      </div>
+
+      <div class="p-5 bg-surface-container-lowest dark:bg-[#1a2525] rounded-2xl shadow-sm dark:shadow-emerald-900/10 fade-in fade-in-delay-3">
+        <div class="flex items-center gap-2.5 mb-4 text-primary dark:text-emerald-400">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9z"/></svg>
+          <h3 class="font-headline font-bold text-sm text-on-surface dark:text-emerald-50">Infrastructure &amp; Cloud</h3>
+        </div>
+        <div class="flex flex-wrap gap-2">
+          <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-surface-container-high dark:bg-emerald-900/20 rounded-full text-xs font-semibold text-on-surface dark:text-emerald-100 hover:bg-primary-fixed hover:text-on-primary-fixed dark:hover:bg-emerald-500 dark:hover:text-white transition-colors duration-200 cursor-default"><img src="https://cdn.simpleicons.org/kubernetes/0d9488" width="12" height="12" alt="" loading="lazy" aria-hidden="true">Kubernetes</span>
+          <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-surface-container-high dark:bg-emerald-900/20 rounded-full text-xs font-semibold text-on-surface dark:text-emerald-100 hover:bg-primary-fixed hover:text-on-primary-fixed dark:hover:bg-emerald-500 dark:hover:text-white transition-colors duration-200 cursor-default"><img src="https://cdn.simpleicons.org/docker/0d9488" width="12" height="12" alt="" loading="lazy" aria-hidden="true">Docker</span>
+          <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-surface-container-high dark:bg-emerald-900/20 rounded-full text-xs font-semibold text-on-surface dark:text-emerald-100 hover:bg-primary-fixed hover:text-on-primary-fixed dark:hover:bg-emerald-500 dark:hover:text-white transition-colors duration-200 cursor-default">AWS</span>
+          <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-surface-container-high dark:bg-emerald-900/20 rounded-full text-xs font-semibold text-on-surface dark:text-emerald-100 hover:bg-primary-fixed hover:text-on-primary-fixed dark:hover:bg-emerald-500 dark:hover:text-white transition-colors duration-200 cursor-default"><img src="https://cdn.simpleicons.org/digitalocean/0d9488" width="12" height="12" alt="" loading="lazy" aria-hidden="true">DigitalOcean</span>
+          <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-surface-container-high dark:bg-emerald-900/20 rounded-full text-xs font-semibold text-on-surface dark:text-emerald-100 hover:bg-primary-fixed hover:text-on-primary-fixed dark:hover:bg-emerald-500 dark:hover:text-white transition-colors duration-200 cursor-default"><img src="https://cdn.simpleicons.org/terraform/0d9488" width="12" height="12" alt="" loading="lazy" aria-hidden="true">Terraform</span>
+          <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-surface-container-high dark:bg-emerald-900/20 rounded-full text-xs font-semibold text-on-surface dark:text-emerald-100 hover:bg-primary-fixed hover:text-on-primary-fixed dark:hover:bg-emerald-500 dark:hover:text-white transition-colors duration-200 cursor-default">CI/CD</span>
+        </div>
+      </div>
+
+      <div class="p-5 bg-surface-container-lowest dark:bg-[#1a2525] rounded-2xl shadow-sm dark:shadow-emerald-900/10 fade-in fade-in-delay-1">
+        <div class="flex items-center gap-2.5 mb-4 text-primary dark:text-emerald-400">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5V19a9 3 0 0 0 18 0V5"/><path d="M3 12a9 3 0 0 0 18 0"/></svg>
+          <h3 class="font-headline font-bold text-sm text-on-surface dark:text-emerald-50">Databases</h3>
+        </div>
+        <div class="flex flex-wrap gap-2">
+          <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-surface-container-high dark:bg-emerald-900/20 rounded-full text-xs font-semibold text-on-surface dark:text-emerald-100 hover:bg-primary-fixed hover:text-on-primary-fixed dark:hover:bg-emerald-500 dark:hover:text-white transition-colors duration-200 cursor-default"><img src="https://cdn.simpleicons.org/postgresql/0d9488" width="12" height="12" alt="" loading="lazy" aria-hidden="true">PostgreSQL</span>
+          <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-surface-container-high dark:bg-emerald-900/20 rounded-full text-xs font-semibold text-on-surface dark:text-emerald-100 hover:bg-primary-fixed hover:text-on-primary-fixed dark:hover:bg-emerald-500 dark:hover:text-white transition-colors duration-200 cursor-default"><img src="https://cdn.simpleicons.org/mysql/0d9488" width="12" height="12" alt="" loading="lazy" aria-hidden="true">MySQL</span>
+          <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-surface-container-high dark:bg-emerald-900/20 rounded-full text-xs font-semibold text-on-surface dark:text-emerald-100 hover:bg-primary-fixed hover:text-on-primary-fixed dark:hover:bg-emerald-500 dark:hover:text-white transition-colors duration-200 cursor-default"><img src="https://cdn.simpleicons.org/mongodb/0d9488" width="12" height="12" alt="" loading="lazy" aria-hidden="true">MongoDB</span>
+          <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-surface-container-high dark:bg-emerald-900/20 rounded-full text-xs font-semibold text-on-surface dark:text-emerald-100 hover:bg-primary-fixed hover:text-on-primary-fixed dark:hover:bg-emerald-500 dark:hover:text-white transition-colors duration-200 cursor-default"><img src="https://cdn.simpleicons.org/apachecassandra/0d9488" width="12" height="12" alt="" loading="lazy" aria-hidden="true">Cassandra</span>
+          <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-surface-container-high dark:bg-emerald-900/20 rounded-full text-xs font-semibold text-on-surface dark:text-emerald-100 hover:bg-primary-fixed hover:text-on-primary-fixed dark:hover:bg-emerald-500 dark:hover:text-white transition-colors duration-200 cursor-default"><img src="https://cdn.simpleicons.org/redis/0d9488" width="12" height="12" alt="" loading="lazy" aria-hidden="true">Redis</span>
+        </div>
+      </div>
+
+      <div class="p-5 bg-surface-container-lowest dark:bg-[#1a2525] rounded-2xl shadow-sm dark:shadow-emerald-900/10 fade-in fade-in-delay-2">
+        <div class="flex items-center gap-2.5 mb-4 text-primary dark:text-emerald-400">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          <h3 class="font-headline font-bold text-sm text-on-surface dark:text-emerald-50">Observability</h3>
+        </div>
+        <div class="flex flex-wrap gap-2">
+          <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-surface-container-high dark:bg-emerald-900/20 rounded-full text-xs font-semibold text-on-surface dark:text-emerald-100 hover:bg-primary-fixed hover:text-on-primary-fixed dark:hover:bg-emerald-500 dark:hover:text-white transition-colors duration-200 cursor-default"><img src="https://cdn.simpleicons.org/grafana/0d9488" width="12" height="12" alt="" loading="lazy" aria-hidden="true">Grafana</span>
+          <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-surface-container-high dark:bg-emerald-900/20 rounded-full text-xs font-semibold text-on-surface dark:text-emerald-100 hover:bg-primary-fixed hover:text-on-primary-fixed dark:hover:bg-emerald-500 dark:hover:text-white transition-colors duration-200 cursor-default"><img src="https://cdn.simpleicons.org/prometheus/0d9488" width="12" height="12" alt="" loading="lazy" aria-hidden="true">Prometheus</span>
+          <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-surface-container-high dark:bg-emerald-900/20 rounded-full text-xs font-semibold text-on-surface dark:text-emerald-100 hover:bg-primary-fixed hover:text-on-primary-fixed dark:hover:bg-emerald-500 dark:hover:text-white transition-colors duration-200 cursor-default"><img src="https://cdn.simpleicons.org/splunk/0d9488" width="12" height="12" alt="" loading="lazy" aria-hidden="true">Splunk</span>
+          <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-surface-container-high dark:bg-emerald-900/20 rounded-full text-xs font-semibold text-on-surface dark:text-emerald-100 hover:bg-primary-fixed hover:text-on-primary-fixed dark:hover:bg-emerald-500 dark:hover:text-white transition-colors duration-200 cursor-default"><img src="https://cdn.simpleicons.org/elastic/0d9488" width="12" height="12" alt="" loading="lazy" aria-hidden="true">ELK Stack</span>
+          <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-surface-container-high dark:bg-emerald-900/20 rounded-full text-xs font-semibold text-on-surface dark:text-emerald-100 hover:bg-primary-fixed hover:text-on-primary-fixed dark:hover:bg-emerald-500 dark:hover:text-white transition-colors duration-200 cursor-default"><img src="https://cdn.simpleicons.org/dynatrace/0d9488" width="12" height="12" alt="" loading="lazy" aria-hidden="true">Dynatrace</span>
+        </div>
+      </div>
+
+      <div class="p-5 bg-surface-container-lowest dark:bg-[#1a2525] rounded-2xl shadow-sm dark:shadow-emerald-900/10 fade-in fade-in-delay-3">
+        <div class="flex items-center gap-2.5 mb-4 text-primary dark:text-emerald-400">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          <h3 class="font-headline font-bold text-sm text-on-surface dark:text-emerald-50">Practices</h3>
+        </div>
+        <div class="flex flex-wrap gap-2">
+          <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-surface-container-high dark:bg-emerald-900/20 rounded-full text-xs font-semibold text-on-surface dark:text-emerald-100 hover:bg-primary-fixed hover:text-on-primary-fixed dark:hover:bg-emerald-500 dark:hover:text-white transition-colors duration-200 cursor-default">TDD</span>
+          <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-surface-container-high dark:bg-emerald-900/20 rounded-full text-xs font-semibold text-on-surface dark:text-emerald-100 hover:bg-primary-fixed hover:text-on-primary-fixed dark:hover:bg-emerald-500 dark:hover:text-white transition-colors duration-200 cursor-default">Agile / Lean</span>
+          <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-surface-container-high dark:bg-emerald-900/20 rounded-full text-xs font-semibold text-on-surface dark:text-emerald-100 hover:bg-primary-fixed hover:text-on-primary-fixed dark:hover:bg-emerald-500 dark:hover:text-white transition-colors duration-200 cursor-default">Event-Driven</span>
+          <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-surface-container-high dark:bg-emerald-900/20 rounded-full text-xs font-semibold text-on-surface dark:text-emerald-100 hover:bg-primary-fixed hover:text-on-primary-fixed dark:hover:bg-emerald-500 dark:hover:text-white transition-colors duration-200 cursor-default">DDD</span>
+          <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-surface-container-high dark:bg-emerald-900/20 rounded-full text-xs font-semibold text-on-surface dark:text-emerald-100 hover:bg-primary-fixed hover:text-on-primary-fixed dark:hover:bg-emerald-500 dark:hover:text-white transition-colors duration-200 cursor-default"><img src="https://cdn.simpleicons.org/apachemaven/0d9488" width="12" height="12" alt="" loading="lazy" aria-hidden="true">Maven</span>
+          <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-surface-container-high dark:bg-emerald-900/20 rounded-full text-xs font-semibold text-on-surface dark:text-emerald-100 hover:bg-primary-fixed hover:text-on-primary-fixed dark:hover:bg-emerald-500 dark:hover:text-white transition-colors duration-200 cursor-default"><img src="https://cdn.simpleicons.org/gradle/0d9488" width="12" height="12" alt="" loading="lazy" aria-hidden="true">Gradle</span>
+          <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-surface-container-high dark:bg-emerald-900/20 rounded-full text-xs font-semibold text-on-surface dark:text-emerald-100 hover:bg-primary-fixed hover:text-on-primary-fixed dark:hover:bg-emerald-500 dark:hover:text-white transition-colors duration-200 cursor-default"><img src="https://cdn.simpleicons.org/junit5/0d9488" width="12" height="12" alt="" loading="lazy" aria-hidden="true">JUnit</span>
+          <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-surface-container-high dark:bg-emerald-900/20 rounded-full text-xs font-semibold text-on-surface dark:text-emerald-100 hover:bg-primary-fixed hover:text-on-primary-fixed dark:hover:bg-emerald-500 dark:hover:text-white transition-colors duration-200 cursor-default"><img src="https://cdn.simpleicons.org/git/0d9488" width="12" height="12" alt="" loading="lazy" aria-hidden="true">Git</span>
+          <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-surface-container-high dark:bg-emerald-900/20 rounded-full text-xs font-semibold text-on-surface dark:text-emerald-100 hover:bg-primary-fixed hover:text-on-primary-fixed dark:hover:bg-emerald-500 dark:hover:text-white transition-colors duration-200 cursor-default">Optimizely</span>
+          <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-surface-container-high dark:bg-emerald-900/20 rounded-full text-xs font-semibold text-on-surface dark:text-emerald-100 hover:bg-primary-fixed hover:text-on-primary-fixed dark:hover:bg-emerald-500 dark:hover:text-white transition-colors duration-200 cursor-default">Scytale (SPIFFE/SPIRE)</span>
+          <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-surface-container-high dark:bg-emerald-900/20 rounded-full text-xs font-semibold text-on-surface dark:text-emerald-100 hover:bg-primary-fixed hover:text-on-primary-fixed dark:hover:bg-emerald-500 dark:hover:text-white transition-colors duration-200 cursor-default">OWASP</span>
+          <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-surface-container-high dark:bg-emerald-900/20 rounded-full text-xs font-semibold text-on-surface dark:text-emerald-100 hover:bg-primary-fixed hover:text-on-primary-fixed dark:hover:bg-emerald-500 dark:hover:text-white transition-colors duration-200 cursor-default">ISO 27001</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ======= Experience ======= -->
+<section id="experience" class="bg-surface dark:bg-[#0f1717] py-16 md:py-20" aria-labelledby="experience-title">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6">
+    <header class="mb-10 fade-in">
+      <span class="text-[11px] font-bold text-primary dark:text-emerald-400 uppercase tracking-widest mb-3 block">Career</span>
+      <h2 class="font-headline text-3xl font-extrabold tracking-tight text-on-surface dark:text-emerald-50" id="experience-title">Experience &amp; Education</h2>
+      <div class="w-10 h-0.5 bg-primary dark:bg-emerald-500 rounded-full mt-4"></div>
+    </header>
+
+    <div class="grid md:grid-cols-2 gap-12">
+
+      <!-- Work Experience -->
+      <div>
+        <h3 class="flex items-center gap-2 text-sm font-bold text-on-surface-variant dark:text-slate-400 uppercase tracking-widest mb-8">
+          <svg class="w-4 h-4 text-primary dark:text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/></svg>
+          Work Experience
+        </h3>
+        <div class="relative space-y-10">
+          <div class="timeline-line"></div>
+
+          <article class="relative pl-10 fade-in">
+            <div class="absolute left-[10px] top-1 w-3 h-3 rounded-full bg-primary dark:bg-emerald-500 border-4 border-surface dark:border-[#0f1717] ring-2 ring-primary/20 dark:ring-emerald-500/20"></div>
+            <span class="text-[10px] font-bold text-primary dark:text-emerald-400 uppercase tracking-widest block mb-1">Sep 2022 – Present</span>
+            <h4 class="font-headline text-base font-bold text-on-surface dark:text-emerald-50">Senior Software Engineer</h4>
+            <p class="text-sm text-on-surface-variant dark:text-slate-400 font-medium mb-1">Klar · Payments &amp; Providers · Fintech</p>
+            <p class="text-xs text-secondary dark:text-slate-500 mb-3">Berlin, Germany · 3 yrs 6 mos</p>
+            <div class="flex flex-wrap gap-1.5 mb-3">
+              <span class="px-2 py-0.5 bg-surface-container-high dark:bg-emerald-900/20 rounded-full text-[11px] font-semibold text-on-surface dark:text-emerald-100">Java</span>
+              <span class="px-2 py-0.5 bg-surface-container-high dark:bg-emerald-900/20 rounded-full text-[11px] font-semibold text-on-surface dark:text-emerald-100">Microservices</span>
+              <span class="px-2 py-0.5 bg-surface-container-high dark:bg-emerald-900/20 rounded-full text-[11px] font-semibold text-on-surface dark:text-emerald-100">Kafka</span>
+              <span class="px-2 py-0.5 bg-surface-container-high dark:bg-emerald-900/20 rounded-full text-[11px] font-semibold text-on-surface dark:text-emerald-100">Kubernetes</span>
+              <span class="px-2 py-0.5 bg-surface-container-high dark:bg-emerald-900/20 rounded-full text-[11px] font-semibold text-on-surface dark:text-emerald-100">Terraform</span>
+              <span class="px-2 py-0.5 bg-surface-container-high dark:bg-emerald-900/20 rounded-full text-[11px] font-semibold text-on-surface dark:text-emerald-100">AWS</span>
+              <span class="px-2 py-0.5 bg-surface-container-high dark:bg-emerald-900/20 rounded-full text-[11px] font-semibold text-on-surface dark:text-emerald-100">Grafana</span>
+            </div>
+            <ul class="space-y-1.5 text-sm text-secondary dark:text-slate-500 leading-relaxed list-none">
+              <li class="flex gap-2"><span class="text-primary dark:text-emerald-500 flex-shrink-0 mt-1">›</span>Maintain 16+ core microservices related to payments and provider integrations</li>
+              <li class="flex gap-2"><span class="text-primary dark:text-emerald-500 flex-shrink-0 mt-1">›</span>Responsible for full SDLC and external dependency management</li>
+              <li class="flex gap-2"><span class="text-primary dark:text-emerald-500 flex-shrink-0 mt-1">›</span>Lead backend development collaborating with product stakeholders across teams</li>
+              <li class="flex gap-2"><span class="text-primary dark:text-emerald-500 flex-shrink-0 mt-1">›</span>Drive new product features and technical improvements across the payments platform</li>
+            </ul>
+          </article>
+
+          <article class="relative pl-10 fade-in fade-in-delay-1">
+            <div class="absolute left-[10px] top-1 w-3 h-3 rounded-full bg-outline-variant dark:bg-slate-700 border-4 border-surface dark:border-[#0f1717]"></div>
+            <span class="text-[10px] font-bold text-on-surface-variant dark:text-slate-500 uppercase tracking-widest block mb-1">Sep 2019 – Aug 2022</span>
+            <h4 class="font-headline text-base font-bold text-on-surface dark:text-emerald-50">Senior Backend Engineer</h4>
+            <p class="text-sm text-on-surface-variant dark:text-slate-400 font-medium mb-1">Smava · Document Check &amp; CRM · Fintech</p>
+            <p class="text-xs text-secondary dark:text-slate-500 mb-3">Berlin, Germany · 2 yrs 11 mos</p>
+            <div class="flex flex-wrap gap-1.5 mb-3">
+              <span class="px-2 py-0.5 bg-surface-container-high dark:bg-emerald-900/20 rounded-full text-[11px] font-semibold text-on-surface dark:text-emerald-100">Java</span>
+              <span class="px-2 py-0.5 bg-surface-container-high dark:bg-emerald-900/20 rounded-full text-[11px] font-semibold text-on-surface dark:text-emerald-100">Spring Boot</span>
+              <span class="px-2 py-0.5 bg-surface-container-high dark:bg-emerald-900/20 rounded-full text-[11px] font-semibold text-on-surface dark:text-emerald-100">Camunda</span>
+              <span class="px-2 py-0.5 bg-surface-container-high dark:bg-emerald-900/20 rounded-full text-[11px] font-semibold text-on-surface dark:text-emerald-100">Typescript</span>
+              <span class="px-2 py-0.5 bg-surface-container-high dark:bg-emerald-900/20 rounded-full text-[11px] font-semibold text-on-surface dark:text-emerald-100">Node.js</span>
+              <span class="px-2 py-0.5 bg-surface-container-high dark:bg-emerald-900/20 rounded-full text-[11px] font-semibold text-on-surface dark:text-emerald-100">MySQL</span>
+              <span class="px-2 py-0.5 bg-surface-container-high dark:bg-emerald-900/20 rounded-full text-[11px] font-semibold text-on-surface dark:text-emerald-100">RabbitMQ</span>
+              <span class="px-2 py-0.5 bg-surface-container-high dark:bg-emerald-900/20 rounded-full text-[11px] font-semibold text-on-surface dark:text-emerald-100">Kubernetes</span>
+            </div>
+            <ul class="space-y-1.5 text-sm text-secondary dark:text-slate-500 leading-relaxed list-none">
+              <li class="flex gap-2"><span class="text-primary dark:text-emerald-500 flex-shrink-0 mt-1">›</span>Built document clearing tool as a proxy credit check system from scratch</li>
+              <li class="flex gap-2"><span class="text-primary dark:text-emerald-500 flex-shrink-0 mt-1">›</span>Created document check process using Camunda workflow supporting 30+ bank validation rules</li>
+              <li class="flex gap-2"><span class="text-primary dark:text-emerald-500 flex-shrink-0 mt-1">›</span>Responsible for full SDLC and external dependency management</li>
+              <li class="flex gap-2"><span class="text-primary dark:text-emerald-500 flex-shrink-0 mt-1">›</span>Built Power Dialer using Twilio in CRM platform</li>
+              <li class="flex gap-2"><span class="text-primary dark:text-emerald-500 flex-shrink-0 mt-1">›</span>Developed &amp; managed customer/lead distribution service optimising advisor-client matching</li>
+            </ul>
+          </article>
+
+          <article class="relative pl-10 fade-in fade-in-delay-2">
+            <div class="absolute left-[10px] top-1 w-3 h-3 rounded-full bg-outline-variant dark:bg-slate-700 border-4 border-surface dark:border-[#0f1717]"></div>
+            <span class="text-[10px] font-bold text-on-surface-variant dark:text-slate-500 uppercase tracking-widest block mb-1">May 2018 – Jun 2019</span>
+            <h4 class="font-headline text-base font-bold text-on-surface dark:text-emerald-50">Senior Product Development Engineer</h4>
+            <p class="text-sm text-on-surface-variant dark:text-slate-400 font-medium mb-1">Verizon Connect · HUM Order Capture · Telematics</p>
+            <p class="text-xs text-secondary dark:text-slate-500 mb-3">Bangalore, India · 1 yr</p>
+            <div class="flex flex-wrap gap-1.5 mb-3">
+              <span class="px-2 py-0.5 bg-surface-container-high dark:bg-emerald-900/20 rounded-full text-[11px] font-semibold text-on-surface dark:text-emerald-100">Java</span>
+              <span class="px-2 py-0.5 bg-surface-container-high dark:bg-emerald-900/20 rounded-full text-[11px] font-semibold text-on-surface dark:text-emerald-100">Spring Boot</span>
+              <span class="px-2 py-0.5 bg-surface-container-high dark:bg-emerald-900/20 rounded-full text-[11px] font-semibold text-on-surface dark:text-emerald-100">Kafka</span>
+              <span class="px-2 py-0.5 bg-surface-container-high dark:bg-emerald-900/20 rounded-full text-[11px] font-semibold text-on-surface dark:text-emerald-100">Microservices</span>
+              <span class="px-2 py-0.5 bg-surface-container-high dark:bg-emerald-900/20 rounded-full text-[11px] font-semibold text-on-surface dark:text-emerald-100">AWS</span>
+              <span class="px-2 py-0.5 bg-surface-container-high dark:bg-emerald-900/20 rounded-full text-[11px] font-semibold text-on-surface dark:text-emerald-100">Activiti</span>
+            </div>
+            <ul class="space-y-1.5 text-sm text-secondary dark:text-slate-500 leading-relaxed list-none">
+              <li class="flex gap-2"><span class="text-primary dark:text-emerald-500 flex-shrink-0 mt-1">›</span>End-to-end order management system for HUM Product Line in connected car / IoT</li>
+              <li class="flex gap-2"><span class="text-primary dark:text-emerald-500 flex-shrink-0 mt-1">›</span>Integrated with Billing, Device Platform, Roadside Assistance, Agent Portal, and Verizon Wireless Retail</li>
+              <li class="flex gap-2"><span class="text-primary dark:text-emerald-500 flex-shrink-0 mt-1">›</span>Implemented workflow-based order capturing across Retail, D2C, and Mobile App channels</li>
+            </ul>
+          </article>
+
+          <article class="relative pl-10 fade-in">
+            <div class="absolute left-[10px] top-1 w-3 h-3 rounded-full bg-outline-variant dark:bg-slate-700 border-4 border-surface dark:border-[#0f1717]"></div>
+            <span class="text-[10px] font-bold text-on-surface-variant dark:text-slate-500 uppercase tracking-widest block mb-1">May 2016 – Jun 2018</span>
+            <h4 class="font-headline text-base font-bold text-on-surface dark:text-emerald-50">Senior Software Engineer</h4>
+            <p class="text-sm text-on-surface-variant dark:text-slate-400 font-medium mb-1">Infinira Software · Retail &amp; Manufacturing</p>
+            <p class="text-xs text-secondary dark:text-slate-500 mb-3">Coimbatore, India · 2 yrs</p>
+            <div class="flex flex-wrap gap-1.5 mb-3">
+              <span class="px-2 py-0.5 bg-surface-container-high dark:bg-emerald-900/20 rounded-full text-[11px] font-semibold text-on-surface dark:text-emerald-100">Spring Boot</span>
+              <span class="px-2 py-0.5 bg-surface-container-high dark:bg-emerald-900/20 rounded-full text-[11px] font-semibold text-on-surface dark:text-emerald-100">Microservices</span>
+              <span class="px-2 py-0.5 bg-surface-container-high dark:bg-emerald-900/20 rounded-full text-[11px] font-semibold text-on-surface dark:text-emerald-100">RabbitMQ</span>
+              <span class="px-2 py-0.5 bg-surface-container-high dark:bg-emerald-900/20 rounded-full text-[11px] font-semibold text-on-surface dark:text-emerald-100">MongoDB</span>
+              <span class="px-2 py-0.5 bg-surface-container-high dark:bg-emerald-900/20 rounded-full text-[11px] font-semibold text-on-surface dark:text-emerald-100">Cassandra</span>
+              <span class="px-2 py-0.5 bg-surface-container-high dark:bg-emerald-900/20 rounded-full text-[11px] font-semibold text-on-surface dark:text-emerald-100">AWS</span>
+              <span class="px-2 py-0.5 bg-surface-container-high dark:bg-emerald-900/20 rounded-full text-[11px] font-semibold text-on-surface dark:text-emerald-100">Gradle</span>
+            </div>
+            <ul class="space-y-1.5 text-sm text-secondary dark:text-slate-500 leading-relaxed list-none">
+              <li class="flex gap-2"><span class="text-primary dark:text-emerald-500 flex-shrink-0 mt-1">›</span>ShopperTrak: implemented new features across multiple microservices for Sales &amp; Labor SaaS platform</li>
+              <li class="flex gap-2"><span class="text-primary dark:text-emerald-500 flex-shrink-0 mt-1">›</span>Tyco TrueVUE: built log analyser web app and contributed to TrueVue Reporting features</li>
+              <li class="flex gap-2"><span class="text-primary dark:text-emerald-500 flex-shrink-0 mt-1">›</span>Rockwell: built full-fledged discrete manufacturing demo with responsive UI; managed small team</li>
+            </ul>
+          </article>
+
+          <article class="relative pl-10 fade-in fade-in-delay-1">
+            <div class="absolute left-[10px] top-1 w-3 h-3 rounded-full bg-outline-variant dark:bg-slate-700 border-4 border-surface dark:border-[#0f1717]"></div>
+            <span class="text-[10px] font-bold text-on-surface-variant dark:text-slate-500 uppercase tracking-widest block mb-1">Dec 2012 – Dec 2016</span>
+            <h4 class="font-headline text-base font-bold text-on-surface dark:text-emerald-50">Software Engineer</h4>
+            <p class="text-sm text-on-surface-variant dark:text-slate-400 font-medium mb-1">Aurea Software · BPM &amp; Product Development</p>
+            <p class="text-xs text-secondary dark:text-slate-500 mb-3">Coimbatore, India · 4 yrs</p>
+            <div class="flex flex-wrap gap-1.5 mb-3">
+              <span class="px-2 py-0.5 bg-surface-container-high dark:bg-emerald-900/20 rounded-full text-[11px] font-semibold text-on-surface dark:text-emerald-100">Java</span>
+              <span class="px-2 py-0.5 bg-surface-container-high dark:bg-emerald-900/20 rounded-full text-[11px] font-semibold text-on-surface dark:text-emerald-100">Savvion BPM</span>
+              <span class="px-2 py-0.5 bg-surface-container-high dark:bg-emerald-900/20 rounded-full text-[11px] font-semibold text-on-surface dark:text-emerald-100">Spring MVC</span>
+              <span class="px-2 py-0.5 bg-surface-container-high dark:bg-emerald-900/20 rounded-full text-[11px] font-semibold text-on-surface dark:text-emerald-100">AWS</span>
+              <span class="px-2 py-0.5 bg-surface-container-high dark:bg-emerald-900/20 rounded-full text-[11px] font-semibold text-on-surface dark:text-emerald-100">JBoss</span>
+              <span class="px-2 py-0.5 bg-surface-container-high dark:bg-emerald-900/20 rounded-full text-[11px] font-semibold text-on-surface dark:text-emerald-100">Oracle</span>
+            </div>
+            <ul class="space-y-1.5 text-sm text-secondary dark:text-slate-500 leading-relaxed list-none">
+              <li class="flex gap-2"><span class="text-primary dark:text-emerald-500 flex-shrink-0 mt-1">›</span>Artemis Views: built Business Rule Checker; implemented BCR Approval workflow using Savvion BPM</li>
+              <li class="flex gap-2"><span class="text-primary dark:text-emerald-500 flex-shrink-0 mt-1">›</span>Savvion BPM: developed Cluster Node Keeper Tool using distributed cache; added JBoss cluster support</li>
+              <li class="flex gap-2"><span class="text-primary dark:text-emerald-500 flex-shrink-0 mt-1">›</span>BPM PaaS: automated VM provisioning for BPM solutions using AWS CloudFormation and EC2</li>
+              <li class="flex gap-2"><span class="text-primary dark:text-emerald-500 flex-shrink-0 mt-1">›</span>Aurea Asset Manager: developed and exposed SOAP and REST web services</li>
+            </ul>
+          </article>
+
+          <article class="relative pl-10 fade-in fade-in-delay-2">
+            <div class="absolute left-[10px] top-1 w-3 h-3 rounded-full bg-outline-variant dark:bg-slate-700 border-4 border-surface dark:border-[#0f1717]"></div>
+            <span class="text-[10px] font-bold text-on-surface-variant dark:text-slate-500 uppercase tracking-widest block mb-1">Jun 2011 – Nov 2012</span>
+            <h4 class="font-headline text-base font-bold text-on-surface dark:text-emerald-50">Software Engineer</h4>
+            <p class="text-sm text-on-surface-variant dark:text-slate-400 font-medium mb-1">Progress Software · BPM Server Development</p>
+            <p class="text-xs text-secondary dark:text-slate-500 mb-3">Coimbatore, India · 1 yr 6 mos</p>
+            <div class="flex flex-wrap gap-1.5 mb-3">
+              <span class="px-2 py-0.5 bg-surface-container-high dark:bg-emerald-900/20 rounded-full text-[11px] font-semibold text-on-surface dark:text-emerald-100">Java</span>
+              <span class="px-2 py-0.5 bg-surface-container-high dark:bg-emerald-900/20 rounded-full text-[11px] font-semibold text-on-surface dark:text-emerald-100">Savvion BPM</span>
+              <span class="px-2 py-0.5 bg-surface-container-high dark:bg-emerald-900/20 rounded-full text-[11px] font-semibold text-on-surface dark:text-emerald-100">ehcache</span>
+              <span class="px-2 py-0.5 bg-surface-container-high dark:bg-emerald-900/20 rounded-full text-[11px] font-semibold text-on-surface dark:text-emerald-100">Infinispan</span>
+              <span class="px-2 py-0.5 bg-surface-container-high dark:bg-emerald-900/20 rounded-full text-[11px] font-semibold text-on-surface dark:text-emerald-100">ExtJS</span>
+            </div>
+            <ul class="space-y-1.5 text-sm text-secondary dark:text-slate-500 leading-relaxed list-none">
+              <li class="flex gap-2"><span class="text-primary dark:text-emerald-500 flex-shrink-0 mt-1">›</span>Developed distributed cache framework using ehcache and Infinispan for Savvion BPM</li>
+              <li class="flex gap-2"><span class="text-primary dark:text-emerald-500 flex-shrink-0 mt-1">›</span>Built configuration generator tool for the distributed cache framework</li>
+              <li class="flex gap-2"><span class="text-primary dark:text-emerald-500 flex-shrink-0 mt-1">›</span>Built code coverage and quality charts for Devfactory ATC UI dashboard</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+
+      <!-- Education -->
+      <div>
+        <h3 class="flex items-center gap-2 text-sm font-bold text-on-surface-variant dark:text-slate-400 uppercase tracking-widest mb-8">
+          <svg class="w-4 h-4 text-primary dark:text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+          Education
+        </h3>
+        <div class="relative space-y-8">
+          <div class="timeline-line"></div>
+
+          <article class="relative pl-10 fade-in fade-in-delay-1">
+            <div class="absolute left-[10px] top-1 w-3 h-3 rounded-full bg-outline-variant dark:bg-slate-700 border-4 border-surface dark:border-[#0f1717]"></div>
+            <span class="text-[10px] font-bold text-on-surface-variant dark:text-slate-500 uppercase tracking-widest block mb-1">2008 – 2011</span>
+            <h4 class="font-headline text-base font-bold text-on-surface dark:text-emerald-50">Master of Computer Application</h4>
+            <p class="text-sm text-on-surface-variant dark:text-slate-400 font-medium mb-2">Computer Science · India</p>
+            <p class="text-sm text-secondary dark:text-slate-500 leading-relaxed">Software engineering, data structures, algorithms, and database management. Systems-level grounding in scalable, efficient software development.</p>
+          </article>
+
+          <article class="relative pl-10 fade-in fade-in-delay-2">
+            <div class="absolute left-[10px] top-1 w-3 h-3 rounded-full bg-outline-variant dark:bg-slate-700 border-4 border-surface dark:border-[#0f1717]"></div>
+            <span class="text-[10px] font-bold text-on-surface-variant dark:text-slate-500 uppercase tracking-widest block mb-1">2005 – 2008</span>
+            <h4 class="font-headline text-base font-bold text-on-surface dark:text-emerald-50">Bachelor of Computer Application</h4>
+            <p class="text-sm text-on-surface-variant dark:text-slate-400 font-medium mb-2">Computer Science · India</p>
+            <p class="text-sm text-secondary dark:text-slate-500 leading-relaxed">Programming, data structures, and software development fundamentals.</p>
+          </article>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ======= Services ======= -->
+<section id="services" class="bg-surface-container-low dark:bg-[#141d1d] py-16 md:py-20" aria-labelledby="services-title">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6">
+    <header class="mb-10 fade-in">
+      <span class="text-[11px] font-bold text-primary dark:text-emerald-400 uppercase tracking-widest mb-3 block">Services</span>
+      <h2 class="font-headline text-3xl font-extrabold tracking-tight text-on-surface dark:text-emerald-50 mb-2" id="services-title">How I can help</h2>
+      <p class="text-on-surface-variant dark:text-slate-400 text-sm">Senior engineering expertise, on demand. I take ownership, not just tickets.</p>
+      <div class="w-10 h-0.5 bg-primary dark:bg-emerald-500 rounded-full mt-4"></div>
+    </header>
+
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+
+      <div class="p-6 bg-surface-container-lowest dark:bg-[#1a2525] rounded-2xl shadow-sm dark:shadow-emerald-900/10 fade-in">
+        <div class="w-10 h-10 bg-primary/10 dark:bg-emerald-500/10 rounded-xl flex items-center justify-center text-primary dark:text-emerald-400 mb-4">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 2 10 6.5v7L12 22 2 15.5v-7L12 2z"/><path d="M12 22v-6.5"/><path d="m22 8.5-10 7-10-7"/></svg>
+        </div>
+        <h3 class="font-headline font-bold text-on-surface dark:text-emerald-50 mb-2">Full-Stack Development</h3>
+        <p class="text-sm text-on-surface-variant dark:text-slate-400 leading-relaxed">Production-grade web applications · TypeScript/React frontend, Java/Spring Boot or Node.js backend. Built to last, not just to ship.</p>
+      </div>
+
+      <div class="p-6 bg-surface-container-lowest dark:bg-[#1a2525] rounded-2xl shadow-sm dark:shadow-emerald-900/10 fade-in fade-in-delay-1">
+        <div class="w-10 h-10 bg-primary/10 dark:bg-emerald-500/10 rounded-xl flex items-center justify-center text-primary dark:text-emerald-400 mb-4">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M9 9h6M9 15h6M9 12h1m5 0h-1"/></svg>
+        </div>
+        <h3 class="font-headline font-bold text-on-surface dark:text-emerald-50 mb-2">Custom Software</h3>
+        <p class="text-sm text-on-surface-variant dark:text-slate-400 leading-relaxed">Bespoke systems built around your domain, not a template. High performance, security-first, with clear handoff documentation.</p>
+      </div>
+
+      <div class="p-6 bg-surface-container-lowest dark:bg-[#1a2525] rounded-2xl shadow-sm dark:shadow-emerald-900/10 fade-in fade-in-delay-2">
+        <div class="w-10 h-10 bg-primary/10 dark:bg-emerald-500/10 rounded-xl flex items-center justify-center text-primary dark:text-emerald-400 mb-4">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5V19A9 3 0 0 0 21 19V5"/><path d="M3 12A9 3 0 0 0 21 12"/></svg>
+        </div>
+        <h3 class="font-headline font-bold text-on-surface dark:text-emerald-50 mb-2">Database Architecture</h3>
+        <p class="text-sm text-on-surface-variant dark:text-slate-400 leading-relaxed">Schema design and query optimisation for PostgreSQL, MongoDB, Cassandra, and Redis · tuned for your real access patterns and SLAs.</p>
+      </div>
+
+      <div class="p-6 bg-surface-container-lowest dark:bg-[#1a2525] rounded-2xl shadow-sm dark:shadow-emerald-900/10 fade-in">
+        <div class="w-10 h-10 bg-primary/10 dark:bg-emerald-500/10 rounded-xl flex items-center justify-center text-primary dark:text-emerald-400 mb-4">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></svg>
+        </div>
+        <h3 class="font-headline font-bold text-on-surface dark:text-emerald-50 mb-2">Cloud &amp; Kubernetes</h3>
+        <p class="text-sm text-on-surface-variant dark:text-slate-400 leading-relaxed">Reliable cloud-native deployments on AWS · Kubernetes, Terraform, CI/CD pipelines. Infrastructure you can reason about and sleep through.</p>
+      </div>
+
+      <div class="p-6 bg-surface-container-lowest dark:bg-[#1a2525] rounded-2xl shadow-sm dark:shadow-emerald-900/10 fade-in fade-in-delay-1">
+        <div class="w-10 h-10 bg-primary/10 dark:bg-emerald-500/10 rounded-xl flex items-center justify-center text-primary dark:text-emerald-400 mb-4">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2"/></svg>
+        </div>
+        <h3 class="font-headline font-bold text-on-surface dark:text-emerald-50 mb-2">Microservices Architecture</h3>
+        <p class="text-sm text-on-surface-variant dark:text-slate-400 leading-relaxed">Event-driven systems with Kafka, clear service boundaries, and distributed patterns that hold up under real production load.</p>
+      </div>
+
+      <div class="p-6 bg-surface-container-lowest dark:bg-[#1a2525] rounded-2xl shadow-sm dark:shadow-emerald-900/10 fade-in fade-in-delay-2">
+        <div class="w-10 h-10 bg-primary/10 dark:bg-emerald-500/10 rounded-xl flex items-center justify-center text-primary dark:text-emerald-400 mb-4">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        </div>
+        <h3 class="font-headline font-bold text-on-surface dark:text-emerald-50 mb-2">Technical Consulting</h3>
+        <p class="text-sm text-on-surface-variant dark:text-slate-400 leading-relaxed">Architecture reviews, codebase audits, and engineering strategy. An independent perspective from someone who's solved this kind of problem before.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ======= Contact ======= -->
+<section id="contact" class="bg-surface dark:bg-[#0f1717] py-16 md:py-20" aria-labelledby="contact-title">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6">
+    <div class="grid md:grid-cols-2 gap-12 items-start fade-in">
+
+      <div>
+        <span class="text-[11px] font-bold text-primary dark:text-emerald-400 uppercase tracking-widest mb-3 block">Contact</span>
+        <h2 class="font-headline text-4xl md:text-5xl font-extrabold tracking-tight text-on-surface dark:text-emerald-50 mb-6 leading-tight" id="contact-title">Let's work<br>together</h2>
+        <p class="text-on-surface-variant dark:text-slate-400 text-[15px] leading-relaxed mb-8">
+          I take on a small number of projects each year.
+          If you have a hard problem or a product to build, reach out · I respond to every message.
         </p>
-      </header>
+        <a href="https://linkedin.com/in/amalrajvinoth" class="inline-flex items-center gap-2 px-6 py-3 bg-primary dark:bg-emerald-600 text-on-primary font-bold rounded-xl active:scale-95 transition-all shadow-lg shadow-primary/20 dark:shadow-emerald-900/40" target="_blank" rel="noopener noreferrer">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+          Message on LinkedIn
+        </a>
+      </div>
 
-      <div class="skills-grid">
-        <div class="skill-category fade-in fade-in-delay-1">
-          <h3 class="skill-category-title">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="2" width="20" height="8" rx="2"/><rect x="2" y="14" width="20" height="8" rx="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg>
-            Backend
-          </h3>
-          <div class="skill-tags">
-            <span class="skill-tag"><img class="skill-icon" src="https://cdn.simpleicons.org/openjdk/0d9488" width="13" height="13" alt="" loading="lazy" aria-hidden="true">Java</span>
-            <span class="skill-tag"><img class="skill-icon" src="https://cdn.simpleicons.org/springboot/0d9488" width="13" height="13" alt="" loading="lazy" aria-hidden="true">Spring Boot</span>
-            <span class="skill-tag"><img class="skill-icon" src="https://cdn.simpleicons.org/nodedotjs/0d9488" width="13" height="13" alt="" loading="lazy" aria-hidden="true">Node.js</span>
-            <span class="skill-tag"><img class="skill-icon" src="https://cdn.simpleicons.org/go/0d9488" width="13" height="13" alt="" loading="lazy" aria-hidden="true">Golang</span>
-            <span class="skill-tag"><span class="skill-icon skill-icon-default" aria-hidden="true"></span>REST APIs</span>
-            <span class="skill-tag"><span class="skill-icon skill-icon-default" aria-hidden="true"></span>Microservices</span>
-            <span class="skill-tag"><img class="skill-icon" src="https://cdn.simpleicons.org/apachekafka/0d9488" width="13" height="13" alt="" loading="lazy" aria-hidden="true">Kafka</span>
-            <span class="skill-tag"><img class="skill-icon" src="https://cdn.simpleicons.org/rabbitmq/0d9488" width="13" height="13" alt="" loading="lazy" aria-hidden="true">RabbitMQ</span>
-            <span class="skill-tag"><img class="skill-icon" src="https://cdn.simpleicons.org/camunda/0d9488" width="13" height="13" alt="" loading="lazy" aria-hidden="true">Camunda</span>
-            <span class="skill-tag"><span class="skill-icon skill-icon-default" aria-hidden="true"></span>Hibernate</span>
+      <div class="space-y-3">
+        <a href="https://linkedin.com/in/amalrajvinoth" class="flex items-center gap-4 p-4 bg-surface-container-low dark:bg-[#1a2525] rounded-2xl hover:bg-surface-container dark:hover:bg-emerald-900/20 transition-colors group" target="_blank" rel="noopener noreferrer">
+          <div class="w-10 h-10 bg-primary/10 dark:bg-emerald-500/10 rounded-xl flex items-center justify-center text-primary dark:text-emerald-400 flex-shrink-0 group-hover:bg-primary/20 transition-colors">
+            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452z"/></svg>
           </div>
-        </div>
-
-        <div class="skill-category fade-in fade-in-delay-2">
-          <h3 class="skill-category-title">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
-            Frontend
-          </h3>
-          <div class="skill-tags">
-            <span class="skill-tag"><img class="skill-icon" src="https://cdn.simpleicons.org/typescript/0d9488" width="13" height="13" alt="" loading="lazy" aria-hidden="true">TypeScript</span>
-            <span class="skill-tag"><img class="skill-icon" src="https://cdn.simpleicons.org/javascript/0d9488" width="13" height="13" alt="" loading="lazy" aria-hidden="true">JavaScript</span>
-            <span class="skill-tag"><img class="skill-icon" src="https://cdn.simpleicons.org/react/0d9488" width="13" height="13" alt="" loading="lazy" aria-hidden="true">React</span>
-            <span class="skill-tag"><img class="skill-icon" src="https://cdn.simpleicons.org/html5/0d9488" width="13" height="13" alt="" loading="lazy" aria-hidden="true">HTML5</span>
-            <span class="skill-tag"><img class="skill-icon" src="https://cdn.simpleicons.org/css/0d9488" width="13" height="13" alt="" loading="lazy" aria-hidden="true">CSS3</span>
+          <div>
+            <div class="text-[10px] font-semibold text-on-surface-variant dark:text-slate-500 uppercase tracking-wider">Message</div>
+            <div class="text-sm font-semibold text-on-surface dark:text-emerald-50">Connect on LinkedIn</div>
           </div>
-        </div>
+        </a>
 
-        <div class="skill-category fade-in fade-in-delay-3">
-          <h3 class="skill-category-title">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9z"/></svg>
-            Infrastructure &amp; Cloud
-          </h3>
-          <div class="skill-tags">
-            <span class="skill-tag"><img class="skill-icon" src="https://cdn.simpleicons.org/kubernetes/0d9488" width="13" height="13" alt="" loading="lazy" aria-hidden="true">Kubernetes</span>
-            <span class="skill-tag"><img class="skill-icon" src="https://cdn.simpleicons.org/docker/0d9488" width="13" height="13" alt="" loading="lazy" aria-hidden="true">Docker</span>
-            <span class="skill-tag"><span class="skill-icon skill-icon-default" aria-hidden="true"></span>AWS</span>
-            <span class="skill-tag"><img class="skill-icon" src="https://cdn.simpleicons.org/digitalocean/0d9488" width="13" height="13" alt="" loading="lazy" aria-hidden="true">DigitalOcean</span>
-            <span class="skill-tag"><img class="skill-icon" src="https://cdn.simpleicons.org/terraform/0d9488" width="13" height="13" alt="" loading="lazy" aria-hidden="true">Terraform</span>
-            <span class="skill-tag"><span class="skill-icon skill-icon-default" aria-hidden="true"></span>CI/CD</span>
+        <a href="https://github.com/amalrajvinoth" class="flex items-center gap-4 p-4 bg-surface-container-low dark:bg-[#1a2525] rounded-2xl hover:bg-surface-container dark:hover:bg-emerald-900/20 transition-colors group" target="_blank" rel="noopener noreferrer">
+          <div class="w-10 h-10 bg-primary/10 dark:bg-emerald-500/10 rounded-xl flex items-center justify-center text-primary dark:text-emerald-400 flex-shrink-0 group-hover:bg-primary/20 transition-colors">
+            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0 1 12 6.844a9.59 9.59 0 0 1 2.504.337c1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.02 10.02 0 0 0 22 12.017C22 6.484 17.522 2 12 2z"/></svg>
           </div>
-        </div>
-
-        <div class="skill-category fade-in fade-in-delay-1">
-          <h3 class="skill-category-title">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5V19a9 3 0 0 0 18 0V5"/><path d="M3 12a9 3 0 0 0 18 0"/></svg>
-            Databases
-          </h3>
-          <div class="skill-tags">
-            <span class="skill-tag"><img class="skill-icon" src="https://cdn.simpleicons.org/postgresql/0d9488" width="13" height="13" alt="" loading="lazy" aria-hidden="true">PostgreSQL</span>
-            <span class="skill-tag"><img class="skill-icon" src="https://cdn.simpleicons.org/mysql/0d9488" width="13" height="13" alt="" loading="lazy" aria-hidden="true">MySQL</span>
-            <span class="skill-tag"><img class="skill-icon" src="https://cdn.simpleicons.org/mongodb/0d9488" width="13" height="13" alt="" loading="lazy" aria-hidden="true">MongoDB</span>
-            <span class="skill-tag"><img class="skill-icon" src="https://cdn.simpleicons.org/apachecassandra/0d9488" width="13" height="13" alt="" loading="lazy" aria-hidden="true">Cassandra</span>
-            <span class="skill-tag"><img class="skill-icon" src="https://cdn.simpleicons.org/redis/0d9488" width="13" height="13" alt="" loading="lazy" aria-hidden="true">Redis</span>
+          <div>
+            <div class="text-[10px] font-semibold text-on-surface-variant dark:text-slate-500 uppercase tracking-wider">GitHub</div>
+            <div class="text-sm font-semibold text-on-surface dark:text-emerald-50">github.com/amalrajvinoth</div>
           </div>
-        </div>
+        </a>
 
-        <div class="skill-category fade-in fade-in-delay-2">
-          <h3 class="skill-category-title">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-            Observability
-          </h3>
-          <div class="skill-tags">
-            <span class="skill-tag"><img class="skill-icon" src="https://cdn.simpleicons.org/grafana/0d9488" width="13" height="13" alt="" loading="lazy" aria-hidden="true">Grafana</span>
-            <span class="skill-tag"><img class="skill-icon" src="https://cdn.simpleicons.org/prometheus/0d9488" width="13" height="13" alt="" loading="lazy" aria-hidden="true">Prometheus</span>
-            <span class="skill-tag"><img class="skill-icon" src="https://cdn.simpleicons.org/splunk/0d9488" width="13" height="13" alt="" loading="lazy" aria-hidden="true">Splunk</span>
-            <span class="skill-tag"><img class="skill-icon" src="https://cdn.simpleicons.org/elastic/0d9488" width="13" height="13" alt="" loading="lazy" aria-hidden="true">ELK Stack</span>
-            <span class="skill-tag"><img class="skill-icon" src="https://cdn.simpleicons.org/dynatrace/0d9488" width="13" height="13" alt="" loading="lazy" aria-hidden="true">Dynatrace</span>
+        <a href="https://linkedin.com/in/amalrajvinoth" class="flex items-center gap-4 p-4 bg-surface-container-low dark:bg-[#1a2525] rounded-2xl hover:bg-surface-container dark:hover:bg-emerald-900/20 transition-colors group" target="_blank" rel="noopener noreferrer">
+          <div class="w-10 h-10 bg-primary/10 dark:bg-emerald-500/10 rounded-xl flex items-center justify-center text-primary dark:text-emerald-400 flex-shrink-0 group-hover:bg-primary/20 transition-colors">
+            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452z"/></svg>
           </div>
-        </div>
+          <div>
+            <div class="text-[10px] font-semibold text-on-surface-variant dark:text-slate-500 uppercase tracking-wider">LinkedIn</div>
+            <div class="text-sm font-semibold text-on-surface dark:text-emerald-50">linkedin.com/in/amalrajvinoth</div>
+          </div>
+        </a>
 
-        <div class="skill-category fade-in fade-in-delay-3">
-          <h3 class="skill-category-title">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-            Practices
-          </h3>
-          <div class="skill-tags">
-            <span class="skill-tag"><span class="skill-icon skill-icon-default" aria-hidden="true"></span>TDD</span>
-            <span class="skill-tag"><span class="skill-icon skill-icon-default" aria-hidden="true"></span>Agile / Lean</span>
-            <span class="skill-tag"><span class="skill-icon skill-icon-default" aria-hidden="true"></span>Event-Driven</span>
-            <span class="skill-tag"><span class="skill-icon skill-icon-default" aria-hidden="true"></span>DDD</span>
-            <span class="skill-tag"><img class="skill-icon" src="https://cdn.simpleicons.org/apachemaven/0d9488" width="13" height="13" alt="" loading="lazy" aria-hidden="true">Maven</span>
-            <span class="skill-tag"><img class="skill-icon" src="https://cdn.simpleicons.org/gradle/0d9488" width="13" height="13" alt="" loading="lazy" aria-hidden="true">Gradle</span>
-            <span class="skill-tag"><img class="skill-icon" src="https://cdn.simpleicons.org/junit5/0d9488" width="13" height="13" alt="" loading="lazy" aria-hidden="true">JUnit</span>
-            <span class="skill-tag"><img class="skill-icon" src="https://cdn.simpleicons.org/git/0d9488" width="13" height="13" alt="" loading="lazy" aria-hidden="true">Git</span>
-            <span class="skill-tag"><span class="skill-icon skill-icon-default" aria-hidden="true"></span>Optimizely</span>
-            <span class="skill-tag"><span class="skill-icon skill-icon-default" aria-hidden="true"></span>Scytale (SPIFFE/SPIRE)</span>
-            <span class="skill-tag"><span class="skill-icon skill-icon-default" aria-hidden="true"></span>OWASP</span>
-            <span class="skill-tag"><span class="skill-icon skill-icon-default" aria-hidden="true"></span>ISO 27001</span>
+        <div class="flex items-center gap-4 p-4 bg-surface-container-low dark:bg-[#1a2525] rounded-2xl">
+          <div class="w-10 h-10 bg-primary/10 dark:bg-emerald-500/10 rounded-xl flex items-center justify-center text-primary dark:text-emerald-400 flex-shrink-0">
+            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+          </div>
+          <div>
+            <div class="text-[10px] font-semibold text-on-surface-variant dark:text-slate-500 uppercase tracking-wider">Location</div>
+            <div class="text-sm font-semibold text-on-surface dark:text-emerald-50">Berlin, Germany</div>
           </div>
         </div>
       </div>
+
     </div>
-  </section>
-
-  <!-- ======= Experience ======= -->
-  <section id="experience" class="section" aria-labelledby="experience-title">
-    <div class="container">
-      <header class="section-header fade-in">
-        <span class="section-eyebrow">Career</span>
-        <h2 class="section-title" id="experience-title">Experience &amp; Education</h2>
-      </header>
-
-      <div class="timeline">
-
-        <!-- Work Experience -->
-        <div>
-          <h3 class="exp-column-title">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/></svg>
-            Work Experience
-          </h3>
-          <div class="timeline-track">
-
-            <article class="timeline-item current fade-in">
-              <div class="timeline-content">
-                <div class="timeline-header">
-                  <div>
-                    <div class="exp-role">Senior Software Engineer</div>
-                    <div class="exp-company">Klar · Payments &amp; Providers · Fintech</div>
-                  </div>
-                  <div class="exp-period">Sep 2022 – Present</div>
-                </div>
-                <div class="exp-location">Berlin, Germany · 3 yrs 6 mos</div>
-                <div class="exp-tags">
-                  <span class="exp-tag">Java</span>
-                  <span class="exp-tag">Microservices</span>
-                  <span class="exp-tag">Kafka</span>
-                  <span class="exp-tag">Kubernetes</span>
-                  <span class="exp-tag">Terraform</span>
-                  <span class="exp-tag">AWS</span>
-                  <span class="exp-tag">Grafana</span>
-                </div>
-                <ul class="exp-bullets">
-                  <li>Maintain 16+ core microservices related to payments and provider integrations</li>
-                  <li>Responsible for full SDLC and external dependency management</li>
-                  <li>Lead backend development collaborating with product stakeholders across teams</li>
-                  <li>Drive new product features and technical improvements across the payments platform</li>
-                </ul>
-              </div>
-            </article>
-
-            <article class="timeline-item fade-in fade-in-delay-1">
-              <div class="timeline-content">
-                <div class="timeline-header">
-                  <div>
-                    <div class="exp-role">Senior Backend Engineer</div>
-                    <div class="exp-company">Smava · Document Check &amp; CRM · Fintech</div>
-                  </div>
-                  <div class="exp-period">Sep 2019 – Aug 2022</div>
-                </div>
-                <div class="exp-location">Berlin, Germany · 2 yrs 11 mos</div>
-                <div class="exp-tags">
-                  <span class="exp-tag">Java</span>
-                  <span class="exp-tag">Spring Boot</span>
-                  <span class="exp-tag">Camunda</span>
-                  <span class="exp-tag">Typescript</span>
-                  <span class="exp-tag">Node.js</span>
-                  <span class="exp-tag">MySQL</span>
-                  <span class="exp-tag">RabbitMQ</span>
-                  <span class="exp-tag">Kubernetes</span>
-                </div>
-                <ul class="exp-bullets">
-                  <li>Built document clearing tool as a proxy credit check system from scratch</li>
-                  <li>Created document check process using Camunda workflow supporting 30+ bank validation rules</li>
-                  <li>Responsible for full SDLC and external dependency management</li>
-                  <li>Built Power Dialer using Twilio in CRM platform</li>
-                  <li>Developed &amp; managed customer/lead distribution service optimising advisor-client matching</li>
-                </ul>
-              </div>
-            </article>
-
-            <article class="timeline-item fade-in fade-in-delay-2">
-              <div class="timeline-content">
-                <div class="timeline-header">
-                  <div>
-                    <div class="exp-role">Senior Product Development Engineer</div>
-                    <div class="exp-company">Verizon Connect · HUM Order Capture · Telematics</div>
-                  </div>
-                  <div class="exp-period">May 2018 – Jun 2019</div>
-                </div>
-                <div class="exp-location">Bangalore, India · 1 yr</div>
-                <div class="exp-tags">
-                  <span class="exp-tag">Java</span>
-                  <span class="exp-tag">Spring Boot</span>
-                  <span class="exp-tag">Kafka</span>
-                  <span class="exp-tag">Microservices</span>
-                  <span class="exp-tag">AWS</span>
-                  <span class="exp-tag">Activiti</span>
-                </div>
-                <ul class="exp-bullets">
-                  <li>End-to-end order management system for HUM Product Line in connected car / IoT</li>
-                  <li>Integrated with Billing, Device Platform, Roadside Assistance, Agent Portal, and Verizon Wireless Retail</li>
-                  <li>Implemented workflow-based order capturing across Retail, D2C, and Mobile App channels</li>
-                </ul>
-              </div>
-            </article>
-
-            <article class="timeline-item fade-in">
-              <div class="timeline-content">
-                <div class="timeline-header">
-                  <div>
-                    <div class="exp-role">Senior Software Engineer</div>
-                    <div class="exp-company">Infinira Software · Retail &amp; Manufacturing</div>
-                  </div>
-                  <div class="exp-period">May 2016 – Jun 2018</div>
-                </div>
-                <div class="exp-location">Coimbatore, India · 2 yrs</div>
-                <div class="exp-tags">
-                  <span class="exp-tag">Spring Boot</span>
-                  <span class="exp-tag">Microservices</span>
-                  <span class="exp-tag">RabbitMQ</span>
-                  <span class="exp-tag">MongoDB</span>
-                  <span class="exp-tag">Cassandra</span>
-                  <span class="exp-tag">AWS</span>
-                  <span class="exp-tag">Gradle</span>
-                </div>
-                <ul class="exp-bullets">
-                  <li>ShopperTrak: implemented new features across multiple microservices for Sales &amp; Labor SaaS platform</li>
-                  <li>Tyco TrueVUE: built log analyser web app and contributed to TrueVue Reporting features</li>
-                  <li>Rockwell: built full-fledged discrete manufacturing demo with responsive UI; managed small team</li>
-                </ul>
-              </div>
-            </article>
-
-            <article class="timeline-item fade-in fade-in-delay-1">
-              <div class="timeline-content">
-                <div class="timeline-header">
-                  <div>
-                    <div class="exp-role">Software Engineer</div>
-                    <div class="exp-company">Aurea Software · BPM &amp; Product Development</div>
-                  </div>
-                  <div class="exp-period">Dec 2012 – Dec 2016</div>
-                </div>
-                <div class="exp-location">Coimbatore, India · 4 yrs</div>
-                <div class="exp-tags">
-                  <span class="exp-tag">Java</span>
-                  <span class="exp-tag">Savvion BPM</span>
-                  <span class="exp-tag">Spring MVC</span>
-                  <span class="exp-tag">AWS</span>
-                  <span class="exp-tag">JBoss</span>
-                  <span class="exp-tag">Oracle</span>
-                </div>
-                <ul class="exp-bullets">
-                  <li>Artemis Views: built Business Rule Checker; implemented BCR Approval workflow using Savvion BPM</li>
-                  <li>Savvion BPM: developed Cluster Node Keeper Tool using distributed cache; added JBoss cluster support</li>
-                  <li>BPM PaaS: automated VM provisioning for BPM solutions using AWS CloudFormation and EC2</li>
-                  <li>Aurea Asset Manager: developed and exposed SOAP and REST web services</li>
-                </ul>
-              </div>
-            </article>
-
-            <article class="timeline-item fade-in fade-in-delay-2">
-              <div class="timeline-content">
-                <div class="timeline-header">
-                  <div>
-                    <div class="exp-role">Software Engineer</div>
-                    <div class="exp-company">Progress Software · BPM Server Development</div>
-                  </div>
-                  <div class="exp-period">Jun 2011 – Nov 2012</div>
-                </div>
-                <div class="exp-location">Coimbatore, India · 1 yr 6 mos</div>
-                <div class="exp-tags">
-                  <span class="exp-tag">Java</span>
-                  <span class="exp-tag">Savvion BPM</span>
-                  <span class="exp-tag">ehcache</span>
-                  <span class="exp-tag">Infinispan</span>
-                  <span class="exp-tag">ExtJS</span>
-                </div>
-                <ul class="exp-bullets">
-                  <li>Developed distributed cache framework using ehcache and Infinispan for Savvion BPM</li>
-                  <li>Built configuration generator tool for the distributed cache framework</li>
-                  <li>Built code coverage and quality charts for Devfactory ATC UI dashboard</li>
-                </ul>
-              </div>
-            </article>
-
-          </div>
-        </div>
-
-        <!-- Education -->
-        <div>
-          <h3 class="exp-column-title">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
-            Education
-          </h3>
-          <div class="timeline-track">
-
-            <article class="timeline-item fade-in fade-in-delay-1">
-              <div class="timeline-content">
-                <div class="timeline-header">
-                  <div>
-                    <div class="exp-role">Master of Computer Application</div>
-                    <div class="exp-company">Computer Science · India</div>
-                  </div>
-                  <div class="exp-period">2008 – 2011</div>
-                </div>
-                <p class="exp-desc">
-                  Software engineering, data structures, algorithms, and database management.
-                  Systems-level grounding in scalable, efficient software development.
-                </p>
-              </div>
-            </article>
-
-            <article class="timeline-item fade-in fade-in-delay-2">
-              <div class="timeline-content">
-                <div class="timeline-header">
-                  <div>
-                    <div class="exp-role">Bachelor of Computer Application</div>
-                    <div class="exp-company">Computer Science · India</div>
-                  </div>
-                  <div class="exp-period">2005 – 2008</div>
-                </div>
-                <p class="exp-desc">
-                  Programming, data structures, and software development fundamentals.
-                </p>
-              </div>
-            </article>
-
-          </div>
-        </div>
-
-      </div>
-    </div>
-  </section>
-
-  <!-- ======= Services ======= -->
-  <section id="services" class="section section-alt" aria-labelledby="services-title">
-    <div class="container">
-      <header class="section-header fade-in">
-        <span class="section-eyebrow">Services</span>
-        <h2 class="section-title" id="services-title">How I can help</h2>
-        <p class="section-desc">
-          Senior engineering expertise, on demand. I take ownership, not just tickets.
-        </p>
-      </header>
-
-      <div class="services-grid">
-
-        <div class="service-card fade-in">
-          <div class="service-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 2 10 6.5v7L12 22 2 15.5v-7L12 2z"/><path d="M12 22v-6.5"/><path d="m22 8.5-10 7-10-7"/></svg>
-          </div>
-          <h3 class="service-title">Full-Stack Development</h3>
-          <p class="service-desc">Production-grade web applications · TypeScript/React frontend, Java/Spring Boot or Node.js backend. Built to last, not just to ship.</p>
-        </div>
-
-        <div class="service-card fade-in fade-in-delay-1">
-          <div class="service-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M9 9h6M9 15h6M9 12h1m5 0h-1"/></svg>
-          </div>
-          <h3 class="service-title">Custom Software</h3>
-          <p class="service-desc">Bespoke systems built around your domain, not a template. High performance, security-first, with clear handoff documentation.</p>
-        </div>
-
-        <div class="service-card fade-in fade-in-delay-2">
-          <div class="service-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5V19A9 3 0 0 0 21 19V5"/><path d="M3 12A9 3 0 0 0 21 12"/></svg>
-          </div>
-          <h3 class="service-title">Database Architecture</h3>
-          <p class="service-desc">Schema design and query optimisation for PostgreSQL, MongoDB, Cassandra, and Redis · tuned for your real access patterns and SLAs.</p>
-        </div>
-
-        <div class="service-card fade-in">
-          <div class="service-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></svg>
-          </div>
-          <h3 class="service-title">Cloud &amp; Kubernetes</h3>
-          <p class="service-desc">Reliable cloud-native deployments on AWS · Kubernetes, Terraform, CI/CD pipelines. Infrastructure you can reason about and sleep through.</p>
-        </div>
-
-        <div class="service-card fade-in fade-in-delay-1">
-          <div class="service-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2"/></svg>
-          </div>
-          <h3 class="service-title">Microservices Architecture</h3>
-          <p class="service-desc">Event-driven systems with Kafka, clear service boundaries, and distributed patterns that hold up under real production load.</p>
-        </div>
-
-        <div class="service-card fade-in fade-in-delay-2">
-          <div class="service-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
-          </div>
-          <h3 class="service-title">Technical Consulting</h3>
-          <p class="service-desc">Architecture reviews, codebase audits, and engineering strategy. An independent perspective from someone who's solved this kind of problem before.</p>
-        </div>
-
-      </div>
-    </div>
-  </section>
-
-  <!-- ======= Contact ======= -->
-  <section id="contact" class="section" aria-labelledby="contact-title">
-    <div class="container">
-      <div class="contact-grid fade-in">
-
-        <div class="contact-left">
-          <span class="section-eyebrow">Contact</span>
-          <h2 class="contact-headline" id="contact-title">Let's work<br>together</h2>
-          <p class="contact-sub">
-            I take on a small number of projects each year.
-            If you have a hard problem or a product to build, reach out · I respond to every message.
-          </p>
-          <a href="https://linkedin.com/in/amalrajvinoth" class="btn btn-primary" target="_blank" rel="noopener noreferrer">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
-            Message on LinkedIn
-          </a>
-        </div>
-
-        <div class="contact-right">
-          <div class="contact-items">
-
-            <a href="https://linkedin.com/in/amalrajvinoth" class="contact-item" target="_blank" rel="noopener noreferrer">
-              <div class="contact-item-icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
-              </div>
-              <div>
-                <div class="contact-item-label">Message</div>
-                <div class="contact-item-value">Connect on LinkedIn</div>
-              </div>
-            </a>
-
-            <a href="https://github.com/amalrajvinoth" class="contact-item" target="_blank" rel="noopener noreferrer">
-              <div class="contact-item-icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0 1 12 6.844a9.59 9.59 0 0 1 2.504.337c1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.02 10.02 0 0 0 22 12.017C22 6.484 17.522 2 12 2z"/></svg>
-              </div>
-              <div>
-                <div class="contact-item-label">GitHub</div>
-                <div class="contact-item-value">github.com/amalrajvinoth</div>
-              </div>
-            </a>
-
-            <a href="https://linkedin.com/in/amalrajvinoth" class="contact-item" target="_blank" rel="noopener noreferrer">
-              <div class="contact-item-icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
-              </div>
-              <div>
-                <div class="contact-item-label">LinkedIn</div>
-                <div class="contact-item-value">linkedin.com/in/amalrajvinoth</div>
-              </div>
-            </a>
-
-            <div class="contact-item">
-              <div class="contact-item-icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
-              </div>
-              <div>
-                <div class="contact-item-label">Location</div>
-                <div class="contact-item-value">Berlin, Germany</div>
-              </div>
-            </div>
-
-          </div>
-        </div>
-
-      </div>
-    </div>
-  </section>
+  </div>
+</section>
 
 </main>
 
 <!-- ======= Footer ======= -->
-<footer id="footer" role="contentinfo">
-  <div class="footer-inner">
-    <p class="footer-copy">&copy; 2025 Amal James. Built with care in Berlin.</p>
-    <div class="footer-social">
-      <a href="https://github.com/amalrajvinoth" target="_blank" rel="noopener noreferrer">GitHub</a>
-      <a href="https://linkedin.com/in/amalrajvinoth" target="_blank" rel="noopener noreferrer">LinkedIn</a>
-      <a href="https://linkedin.com/in/amalrajvinoth" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+<footer id="footer" class="bg-surface-container dark:bg-[#0c1212] border-t border-outline-variant/20 dark:border-emerald-900/30 py-12" role="contentinfo">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col items-center gap-5 text-center">
+    <div class="font-mono text-sm font-bold text-on-surface dark:text-emerald-50">
+      <span class="text-primary dark:text-emerald-400">&lt;</span>amal_james<span class="text-primary dark:text-emerald-400">/&gt;</span>
     </div>
+    <div class="flex gap-6">
+      <a href="https://github.com/amalrajvinoth" class="text-xs font-semibold text-primary dark:text-emerald-400 hover:opacity-70 transition-opacity" target="_blank" rel="noopener noreferrer">GitHub</a>
+      <a href="https://linkedin.com/in/amalrajvinoth" class="text-xs font-semibold text-primary dark:text-emerald-400 hover:opacity-70 transition-opacity" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+    </div>
+    <p class="text-xs text-secondary dark:text-slate-600">© 2025 Amal James. Built with care in Berlin.</p>
   </div>
 </footer>
 
-<!-- Back to top -->
-<a href="#hero" class="back-to-top" aria-label="Back to top">
+<!-- ======= Bottom Nav (mobile only) ======= -->
+<nav class="fixed bottom-0 left-0 w-full flex md:hidden justify-around items-center px-4 pb-5 pt-2 bg-surface-container-lowest/85 dark:bg-[#0f1717]/90 backdrop-blur-lg border-t border-slate-200/10 dark:border-emerald-500/10 shadow-[0_-4px_24px_rgba(0,0,0,0.04)] dark:shadow-black/40 z-50" aria-label="Mobile navigation">
+  <a href="#about" class="flex flex-col items-center justify-center gap-1 bg-surface-container-low dark:bg-emerald-900/30 text-primary dark:text-emerald-400 rounded-2xl px-4 py-2 active:translate-y-0.5 transition-transform">
+    <span class="material-symbols-outlined" style="font-size:22px;font-variation-settings:'FILL' 1">person</span>
+    <span class="font-headline text-[9px] font-semibold uppercase tracking-widest">About</span>
+  </a>
+  <a href="#skills" class="flex flex-col items-center justify-center gap-1 text-on-surface-variant dark:text-slate-400 px-4 py-2 hover:text-primary dark:hover:text-emerald-400 active:translate-y-0.5 transition-transform">
+    <span class="material-symbols-outlined" style="font-size:22px">terminal</span>
+    <span class="font-headline text-[9px] font-semibold uppercase tracking-widest">Skills</span>
+  </a>
+  <a href="#experience" class="flex flex-col items-center justify-center gap-1 text-on-surface-variant dark:text-slate-400 px-4 py-2 hover:text-primary dark:hover:text-emerald-400 active:translate-y-0.5 transition-transform">
+    <span class="material-symbols-outlined" style="font-size:22px">work</span>
+    <span class="font-headline text-[9px] font-semibold uppercase tracking-widest">Work</span>
+  </a>
+  <a href="#contact" class="flex flex-col items-center justify-center gap-1 text-on-surface-variant dark:text-slate-400 px-4 py-2 hover:text-primary dark:hover:text-emerald-400 active:translate-y-0.5 transition-transform">
+    <span class="material-symbols-outlined" style="font-size:22px">alternate_email</span>
+    <span class="font-headline text-[9px] font-semibold uppercase tracking-widest">Contact</span>
+  </a>
+</nav>
+
+<!-- ======= Back to Top ======= -->
+<a href="#hero" class="back-to-top fixed right-6 bottom-24 md:bottom-8 w-10 h-10 flex items-center justify-center rounded-full bg-primary dark:bg-emerald-600 text-on-primary shadow-lg shadow-primary/30 dark:shadow-emerald-900/50 z-40 hover:opacity-90 transition-opacity" aria-label="Back to top">
   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="18 15 12 9 6 15"/></svg>
 </a>
 
